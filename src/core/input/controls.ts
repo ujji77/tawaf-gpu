@@ -1,14 +1,24 @@
 import { InputSystem } from '@core';
 
-export type GameAction = 'MoveForward' | 'MoveBackward' | 'RotateLeft' | 'RotateRight' | 'Run' | 'Jump';
+export type GameAction =
+  | 'MoveForward' | 'MoveBackward' | 'RotateLeft' | 'RotateRight' | 'Run' | 'Jump'
+  | 'CameraForward' | 'CameraBackward' | 'CameraLeft' | 'CameraRight'
+  | 'ZoomIn' | 'ZoomOut';
 
 export const input = new InputSystem<GameAction>();
 
 export const keyBindings: Record<string, GameAction> = {
-  KeyW: 'MoveForward', ArrowUp: 'MoveForward',
-  KeyS: 'MoveBackward', ArrowDown: 'MoveBackward',
-  KeyA: 'RotateLeft', ArrowLeft: 'RotateLeft',
-  KeyD: 'RotateRight', ArrowRight: 'RotateRight',
+  ArrowUp: 'MoveForward',
+  ArrowDown: 'MoveBackward',
+  ArrowLeft: 'RotateLeft',
+  ArrowRight: 'RotateRight',
   ShiftLeft: 'Run', ShiftRight: 'Run',
-  Space: 'Jump'
+  Space: 'Jump',
+
+  KeyW: 'CameraForward',
+  KeyS: 'CameraBackward',
+  KeyA: 'CameraLeft',
+  KeyD: 'CameraRight',
+  KeyQ: 'ZoomIn',
+  KeyE: 'ZoomOut',
 };

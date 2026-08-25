@@ -7,8 +7,8 @@ import { resolvePlayAreaCollision } from './collision';
 /**
  * SOLVER: TANK MODE (Tank Control)
  * Direct implementation of the original tank controls.
- * W/S = Move Forward/Back
- * A/D = Rotate Left/Right (Velocity based)
+ * Arrow Up/Down = Move Forward/Back
+ * Arrow Left/Right = Rotate Left/Right (Velocity based)
  */
 
 export const solveTank = (

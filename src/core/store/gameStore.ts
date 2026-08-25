@@ -7,7 +7,10 @@ export enum CameraMode {
   Follow  = 0,
   FPV = 1,
   Detached = 2,
+  BirdsEye = 3,
 }
+
+export const CAMERA_MODE_COUNT = 4;
 
 interface GameState {
   // ===== Camera State =====
@@ -55,7 +58,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   cameraMode: CameraMode.Follow,
   setCameraMode: (mode) => set({ cameraMode: mode }),
   toggleCameraMode: () => set((state) => ({
-    cameraMode: (state.cameraMode + 1) % 3
+    cameraMode: (state.cameraMode + 1) % CAMERA_MODE_COUNT
   })),
   
   // ===== Character State =====

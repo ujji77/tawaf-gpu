@@ -81,7 +81,7 @@ export default function App() {
                 camera={{
                     fov: 45,
                     near: 0.1,
-                    far: 200,
+                    far: 400,
                     position: [20, 20, 30]
                 }}
                 gl={(canvas) => {

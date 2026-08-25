@@ -58,6 +58,7 @@ export function useEffectsControls() {
           bokehScale: dofParamsFPV.bokehScale,
         };
       case CameraMode.Detached:
+      case CameraMode.BirdsEye:
         return {
           enabled: dofParamsFREE.enabled,
           autofocus: dofParamsFREE.autofocus,

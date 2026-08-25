@@ -1,5 +1,5 @@
 import * as THREE from 'three/webgpu';
-import { Group, Camera, Euler } from 'three';
+import { Group, Camera } from 'three';
 import { PhysicsState } from '../config';
 import { input } from '../../../core/input/controls';
 import { resolvePlayAreaCollision } from './collision';
@@ -9,7 +9,8 @@ const getShortestAngleDifference = (from: number, to: number) => {
   return Math.atan2(Math.sin(delta), Math.cos(delta));
 };
 
-const tempEuler = new Euler(0, 0, 0, 'YXZ');
+const camForward = new THREE.Vector3();
+const camUp = new THREE.Vector3();
 
 /**
  * SOLVER: CAMERA MODE (Camera Relative)
@@ -40,7 +41,6 @@ export const solveCam = (
     ix = joyX;
     iy = joyY;
   } else {
-    // Map WASD to Vector
     if (rotateLeft) ix -= 1;
     if (rotateRight) ix += 1;
     if (moveForward) iy += 1;
@@ -54,12 +54,8 @@ export const solveCam = (
 
   if (inputLen > 0.1) {
     // A. Calculate Target Angle relative to Camera
-    // FIX: Using (ix, iy) maps Forward Input to Forward Angle (0 rads).
-    // (Previous version used -iy which reversed controls)
     const inputAngle = Math.atan2(ix, -iy);
-
-    tempEuler.setFromQuaternion(camera.quaternion);
-    const camAngle = tempEuler.y;
+    const camAngle = getCameraYaw(camera);
 
     const targetRotation = camAngle + inputAngle;
 
@@ -90,3 +86,18 @@ export const solveCam = (
   // Reset Rotation Velocity (Clean up state from FPV mode)
   s.rotationVelocity = 0;
 };
+
+function getCameraYaw(camera: Camera) {
+  camera.getWorldDirection(camForward);
+  const horizontalSq = camForward.x * camForward.x + camForward.z * camForward.z;
+
+  if (horizontalSq < 0.01) {
+    camUp.set(0, 1, 0).applyQuaternion(camera.quaternion);
+    camForward.set(camUp.x, 0, camUp.z);
+  } else {
+    camForward.y = 0;
+  }
+
+  camForward.normalize();
+  return Math.atan2(-camForward.x, -camForward.z);
+}

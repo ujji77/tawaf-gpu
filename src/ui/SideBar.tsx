@@ -1,9 +1,10 @@
 import { IconButton, Tooltip } from '@mui/material';
-import { CameraMode, useGameStore } from '../core/store/gameStore';
+import { CameraMode, CAMERA_MODE_COUNT, useGameStore } from '../core/store/gameStore';
 import PersonIcon from '@mui/icons-material/Person';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
+import MapIcon from '@mui/icons-material/Map';
 
 export function SideBar() {
     const isMobile = useGameStore((state) => state.isMobile);
@@ -15,7 +16,7 @@ export function SideBar() {
     const toggleQuality = useGameStore((state) => state.toggleQuality); 
 
     const cycleCameraMode = () => {
-        setCameraMode((cameraMode + 1) % 3);
+        setCameraMode(((cameraMode + 1) % CAMERA_MODE_COUNT) as CameraMode);
     };
 
     const btnStyle = {
@@ -57,6 +58,10 @@ export function SideBar() {
         [CameraMode.Detached]: {
             icon: <ThreeSixtyIcon sx={iconBaseStyle} />,
             title: "Tripod View"
+        },
+        [CameraMode.BirdsEye]: {
+            icon: <MapIcon sx={iconBaseStyle} />,
+            title: "Bird's Eye"
         },
     };
     const currentCamera = cameraConfig[cameraMode];
