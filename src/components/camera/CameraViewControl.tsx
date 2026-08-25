@@ -12,7 +12,7 @@ type Props = {
 export const CAMERA_POSITION = new THREE.Vector3(-4, 2, -0.5);
 export const CAMERA_LOOKAT = new THREE.Vector3(0, 1, 0);
 
-export function CameraViewControl({ boneName = 'head' }: Props) {
+export function CameraViewControl({ boneName = 'mixamorig:Head_06' }: Props) {
   const cameraMode = useGameStore((state) => state.cameraMode);
   const characterRef = useGameStore((state) => state.characterRef);
   const isGameLoaded = useGameStore((state) => state.isGameStarted);
@@ -81,11 +81,16 @@ export function CameraViewControl({ boneName = 'head' }: Props) {
     }
   }, [cameraMode, isControlEnabled, resetCamera]);
 
+  // CameraControls keeps applying its own damped transform to the camera every frame even
+  // when `enabled={false}` (that prop only gates its pointer listeners) - it has to be fully
+  // unmounted in FPV, otherwise it fights useFPVCamera and silently overwrites its transform.
+  if (cameraMode === CameraMode.FPV) return null;
+
   return (
     <CameraControls
       ref={controlsRef}
       makeDefault
-      enabled={cameraMode !== CameraMode.FPV && isControlEnabled}
+      enabled={isControlEnabled}
       minDistance={2}
       maxDistance={20}
       maxPolarAngle={Math.PI / 2}

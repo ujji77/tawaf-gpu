@@ -1,8 +1,5 @@
-import { useRef, useMemo, useEffect, Suspense } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useRef, useEffect, Suspense } from 'react';
 import { Group } from 'three';
-import * as THREE from 'three/webgpu';
-import { uniform } from 'three/tsl';
 import { CharacterProps } from './config';
 import { useCharacterAssets } from './hooks/useCharacterAssets';
 import { useCharacterPhysics } from './hooks/useCharacterPhysics';
@@ -13,16 +10,8 @@ export const Character = ({ position = [0, 0, 0], scale = 1, visible = true }: C
   const groupRef = useRef<Group>(null);
   const audioRef = useRef<CharacterAudioHandle>(null);
 
-  const hasPrevFrameRef = useRef(false);
-  const worldPosRef = useRef(new THREE.Vector3());
-  const prevWorldPosRef = useRef(new THREE.Vector3());
-  const velocityRef = useRef(new THREE.Vector3());
-
-  const uWorldPos = useMemo(() => uniform(new THREE.Vector3(0, 0, 0)), []);
-  const uVelocity = useMemo(() => uniform(new THREE.Vector3(0, 0, 0)), []);
-
   const setCharacterRef = useGameStore((state) => state.setCharacterRef);
-  const { scene, animations, helmets } = useCharacterAssets(uWorldPos);
+  const { scene, animations, helmets } = useCharacterAssets();
 
   // Get camera mode from store
   const cameraMode = useGameStore((state) => state.cameraMode);
@@ -45,27 +34,6 @@ export const Character = ({ position = [0, 0, 0], scale = 1, visible = true }: C
       });
     }
   }, [cameraMode, helmets]);
-
-  useFrame((_, delta) => {
-    if (!groupRef.current) return;
-    groupRef.current.updateMatrixWorld(true);
-    const worldPos = worldPosRef.current;
-    worldPos.setFromMatrixPosition(groupRef.current.matrixWorld);
-
-    uWorldPos.value.set(worldPos.x, worldPos.y, worldPos.z);
-
-    if (hasPrevFrameRef.current) {
-      const velocity = velocityRef.current;
-      velocity.subVectors(worldPos, prevWorldPosRef.current);
-      if (delta > 0) velocity.divideScalar(delta);
-      uVelocity.value.set(velocity.x, velocity.y, velocity.z);
-    } else {
-      uVelocity.value.set(0, 0, 0);
-      hasPrevFrameRef.current = true;
-    }
-
-    prevWorldPosRef.current.copy(worldPos);
-  });
 
   if (!scene) return null;
 

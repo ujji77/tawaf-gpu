@@ -2,6 +2,7 @@ import { useGameStore } from "../core/store/gameStore";
 import { LoadingScreen } from "./LoadingScreen";
 import AudioButton from "./AudioButton";
 import { SideBar } from "./SideBar";
+import { ControlHints } from "./ControlHints";
 import { TouchJoystick } from "../core/input/TouchJoystick";
 import { input } from "../core/input/controls";
 
@@ -43,6 +44,8 @@ export function UI() {
                             right: 'RotateRight',
                             run: 'Run'
                         }} />}
+
+                {!isMobile && <ControlHints />}
             </div>
         </div>
     );

@@ -2,6 +2,7 @@ import * as THREE from 'three/webgpu';
 import { Group } from 'three';
 import { PhysicsState } from '../config';
 import { input } from '../../../core/input/controls';
+import { resolvePlayAreaCollision } from './collision';
 
 /**
  * SOLVER: TANK MODE (Tank Control)
@@ -54,4 +55,6 @@ export const solveTank = (
   if (Math.abs(s.speed) > 0.01) {
     group.translateZ(s.speed * delta);
   }
+
+  resolvePlayAreaCollision(group);
 };

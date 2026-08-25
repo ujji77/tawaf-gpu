@@ -1,5 +1,5 @@
 import { Environment, PerformanceMonitor, useGLTF } from "@react-three/drei";
-import { LevaWrapper, AudioManager, KeyboardMapper, KTX2Preloader, preloadVATAssets } from "@core";
+import { LevaWrapper, AudioManager, KeyboardMapper } from "@core";
 import { Canvas, useLoader } from "@react-three/fiber";
 import { useEffect, Suspense, useMemo, useState } from "react";
 import { DirectionalLight } from "../components/DirectionalLight";
@@ -15,8 +15,7 @@ import * as THREE from "three/webgpu";
 import { input, keyBindings } from "../core/input/controls";
 import { useShortcut } from "@core/hooks/useShortcut";
 import { AudioLoader } from 'three';
-import { ROSE_TEXTURES } from "../components/Rose/core/config";
-import { BODY_TEXTURE_PATHS, DETAIL_TEXTURE_PATHS, MODEL_PATHS } from '../components/character/config';
+import { MODEL_PATHS } from '../components/character/config';
 
 
 useLoader.preload(AudioLoader,
@@ -29,9 +28,6 @@ useLoader.preload(AudioLoader,
 useLoader.preload(AudioLoader, ['/audio/wave01.mp3']);
 
 useGLTF.preload(MODEL_PATHS);
-
-preloadVATAssets('/vat/Rose_meta.json');
-preloadVATAssets('/vat/RoseLowPoly_meta.json');
 
 export const BeamSceneContext = createContext<THREE.Scene | null>(null);
 
@@ -104,12 +100,6 @@ export default function App() {
                 }}
                 dpr={dpr}
             >
-                <Suspense fallback={null}>
-                    <KTX2Preloader paths={ROSE_TEXTURES} />
-                    <KTX2Preloader paths={BODY_TEXTURE_PATHS} />
-                    <KTX2Preloader paths={DETAIL_TEXTURE_PATHS} />
-                </Suspense>
-
                 <AudioManager onListenerCreated={setAudioListener} />
 
                 <PerformanceMonitor

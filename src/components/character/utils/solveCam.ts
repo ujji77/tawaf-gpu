@@ -2,6 +2,7 @@ import * as THREE from 'three/webgpu';
 import { Group, Camera, Euler } from 'three';
 import { PhysicsState } from '../config';
 import { input } from '../../../core/input/controls';
+import { resolvePlayAreaCollision } from './collision';
 
 const getShortestAngleDifference = (from: number, to: number) => {
   const delta = to - from;
@@ -83,6 +84,8 @@ export const solveCam = (
   if (Math.abs(s.speed) > 0.01) {
     group.translateZ(s.speed * delta);
   }
+
+  resolvePlayAreaCollision(group);
 
   // Reset Rotation Velocity (Clean up state from FPV mode)
   s.rotationVelocity = 0;

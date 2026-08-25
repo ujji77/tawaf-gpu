@@ -42,7 +42,9 @@ export default function Effects() {
       uParams.current.focusDist.value = dofCfg.focusDistance;
     }
     uParams.current.focalLen.value = dofCfg.focalLength;
-    uParams.current.bokeh.value = dofCfg.bokehScale;
+    // DOF's autofocus distance grows a lot outside FPV (camera is far from the character),
+    // which reads as the whole scene being blurry. Keep DOF as an FPV-only effect.
+    uParams.current.bokeh.value = cameraMode === CameraMode.FPV ? dofCfg.bokehScale : 0;
 
     uParams.current.helmetStr.value = cameraMode === CameraMode.FPV ? 1 : 0;
 
