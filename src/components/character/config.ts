@@ -16,6 +16,9 @@ export const MODEL_PATHS = [
   '/models/hajj_man_animated.glb',
 ];
 
+/** Animated head bone on hajj_man_animated.glb (Mixamo / Sketchfab armature). */
+export const HEAD_BONE_NAME = 'mixamorig:Head_06';
+
 // ============================================================================
 // Types
 // ============================================================================

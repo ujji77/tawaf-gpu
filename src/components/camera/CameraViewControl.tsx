@@ -3,6 +3,7 @@ import { CameraControls, CameraControlsImpl } from '@react-three/drei';
 import { useFPVCamera } from './hooks/useFPVCamera';
 import { useFollowCamera } from './hooks/useFollowCamera';
 import { useKeyboardCamera } from './hooks/useKeyboardCamera';
+import { HEAD_BONE_NAME } from '../character/config';
 import { useCallback, useEffect, useRef } from 'react';
 import * as THREE from 'three/webgpu';
 
@@ -19,7 +20,7 @@ export const BIRDS_EYE_POLAR = 0.22;
 export const BIRDS_EYE_MIN_DISTANCE = 16;
 export const BIRDS_EYE_MAX_DISTANCE = 140;
 
-export function CameraViewControl({ boneName = 'mixamorig:Head_06' }: Props) {
+export function CameraViewControl({ boneName = HEAD_BONE_NAME }: Props) {
   const cameraMode = useGameStore((state) => state.cameraMode);
   const characterRef = useGameStore((state) => state.characterRef);
   const isGameLoaded = useGameStore((state) => state.isGameStarted);

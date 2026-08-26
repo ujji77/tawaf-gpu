@@ -1,6 +1,6 @@
 import { useEffect, useRef, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Bone, Group, Vector3, Quaternion, Euler, MathUtils, Object3D } from 'three';
+import { Group, Vector3, Quaternion, Euler, MathUtils, Object3D, SkinnedMesh } from 'three';
 import { useControls } from 'leva';
 import { useGameStore } from '../../../core/store/gameStore';
 
@@ -18,39 +18,32 @@ export function useFPVCamera({
   const { camera } = useThree();
   const isMobile = useGameStore((state) => state.isMobile);
 
-  const targetBone = useRef<Bone | undefined>(undefined);
-  
+  const targetBone = useRef<Object3D | undefined>(undefined);
+
   const pcTargetRotation = useRef({ x: 0, y: 0 });
-  
   const mobileRotation = useRef({ x: 0, y: 0 });
-  
   const currentRotation = useRef({ x: 0, y: 0 });
-  
   const lastTouchRef = useRef<{ x: number, y: number } | null>(null);
 
-  const { vec3, quat, quatOffset, quatBone, quatLookForward, modelCorrectionQuat, dummyEuler, mouseQuat, offsetVec } = useMemo(() => ({
+  const { vec3, quat, dummyEuler, mouseQuat, offsetVec } = useMemo(() => ({
     vec3: new Vector3(),
     quat: new Quaternion(),
-    quatOffset: new Quaternion(),
-    quatBone: new Quaternion(),
-    quatLookForward: new Quaternion(),
-    modelCorrectionQuat: new Quaternion().setFromEuler(new Euler(0, Math.PI, 0, 'YXZ')),
     dummyEuler: new Euler(),
     mouseQuat: new Quaternion(),
-    offsetVec: new Vector3(), // Reuse for camera offset
+    offsetVec: new Vector3(),
   }), []);
 
   const config = useControls('FPV Settings', {
-    rotateX: { value: -90, min: -180, max: 180, step: 1 },
-    rotateY: { value: -90, min: -180, max: 180, step: 1 },
-    rotateZ: { value: 0, min: -180, max: 180, step: 1 },
     offsetX: { value: 0, min: -2, max: 2, step: 0.01 },
-    offsetY: { value: 0.5, min: -2, max: 2, step: 0.01 },
-    offsetZ: { value: -0.2, min: -2, max: 2, step: 0.01 },
-    headBodySmoothing: { value: 0.97, min: 0, max: 1, step: 0.01 },
+    offsetY: { value: 0.12, min: -2, max: 2, step: 0.01 },
+    offsetZ: { value: -0.12, min: -2, max: 2, step: 0.01 },
     mouseRotationSmoothing: { value: 0.1, min: 0.01, max: 1, step: 0.01 },
     touchSensitivity: { value: 0.005, min: 0.001, max: 0.02, step: 0.001 },
   }, { collapsed: true });
+
+  useEffect(() => {
+    targetBone.current = undefined;
+  }, [characterRef, boneName, enabled]);
 
   useEffect(() => {
     if (!enabled || isMobile) return;
@@ -90,7 +83,7 @@ export function useFPVCamera({
       if (e.cancelable) e.preventDefault();
 
       let activeTouch: Touch | null = null;
-      
+
       for (let i = 0; i < e.touches.length; i++) {
         const t = e.touches[i];
         if (isValidTouchArea(t)) {
@@ -130,76 +123,96 @@ export function useFPVCamera({
   useFrame(() => {
     if (!enabled || !characterRef?.current) return;
 
-    if (!targetBone.current || !isBoneAttached(targetBone.current, characterRef.current)) {
-      targetBone.current = findBone(characterRef.current, boneName);
+    const character = characterRef.current;
+    character.updateMatrixWorld(true);
+
+    if (!targetBone.current || !isDescendantOf(targetBone.current, character)) {
+      targetBone.current = findHeadBone(character, boneName);
     }
 
     if (targetBone.current) {
-      characterRef.current.updateMatrixWorld(true);
-
       targetBone.current.getWorldPosition(vec3);
-      targetBone.current.getWorldQuaternion(quatBone);
-
-      characterRef.current.getWorldQuaternion(quatLookForward);
-      quatLookForward.multiply(modelCorrectionQuat);
-
-      dummyEuler.set(
-        MathUtils.degToRad(config.rotateX),
-        MathUtils.degToRad(config.rotateY),
-        MathUtils.degToRad(config.rotateZ),
-        'YXZ'
-      );
-      quatOffset.setFromEuler(dummyEuler);
-      quatBone.multiply(quatOffset);
-      
-      quat.copy(quatBone).slerp(quatLookForward, config.headBodySmoothing);
-
-      if (isMobile) {
-        currentRotation.current.x = mobileRotation.current.x;
-        currentRotation.current.y = mobileRotation.current.y;
-      } else {
-        currentRotation.current.x = MathUtils.lerp(
-          pcTargetRotation.current.x,
-          currentRotation.current.x,
-          config.mouseRotationSmoothing
-        );
-        currentRotation.current.y = MathUtils.lerp(
-          pcTargetRotation.current.y,
-          currentRotation.current.y,
-          config.mouseRotationSmoothing
-        );
-      }
-
-      dummyEuler.set(currentRotation.current.y, currentRotation.current.x, 0, 'YXZ');
-      mouseQuat.setFromEuler(dummyEuler);
-      quat.multiply(mouseQuat);
-
-      // Reuse offsetVec instead of creating new Vector3
-      offsetVec.set(config.offsetX, config.offsetY, config.offsetZ);
-      offsetVec.applyQuaternion(quat);
-      vec3.add(offsetVec);
-
-      camera.position.copy(vec3);
-      camera.quaternion.copy(quat);
-
-      camera.updateMatrixWorld(true)
+    } else {
+      character.getWorldPosition(vec3);
+      vec3.y += 1.6;
     }
+
+    // Walk direction is group local +Z; Three.js cameras look down -Z.
+    character.getWorldQuaternion(quat);
+    dummyEuler.setFromQuaternion(quat, 'YXZ');
+    dummyEuler.x = 0;
+    dummyEuler.z = 0;
+    dummyEuler.y += Math.PI;
+    quat.setFromEuler(dummyEuler);
+
+    if (isMobile) {
+      currentRotation.current.x = mobileRotation.current.x;
+      currentRotation.current.y = mobileRotation.current.y;
+    } else {
+      currentRotation.current.x = MathUtils.lerp(
+        pcTargetRotation.current.x,
+        currentRotation.current.x,
+        config.mouseRotationSmoothing
+      );
+      currentRotation.current.y = MathUtils.lerp(
+        pcTargetRotation.current.y,
+        currentRotation.current.y,
+        config.mouseRotationSmoothing
+      );
+    }
+
+    dummyEuler.set(currentRotation.current.y, currentRotation.current.x, 0, 'YXZ');
+    mouseQuat.setFromEuler(dummyEuler);
+    quat.multiply(mouseQuat);
+
+    offsetVec.set(config.offsetX, config.offsetY, config.offsetZ);
+    offsetVec.applyQuaternion(quat);
+    vec3.add(offsetVec);
+
+    camera.position.copy(vec3);
+    camera.quaternion.copy(quat);
+    camera.updateMatrixWorld(true);
   });
 }
 
-function isBoneAttached(bone: Object3D, characterRoot: Object3D): boolean {
-  let ancestor: Object3D | null = bone.parent;
+function isDescendantOf(node: Object3D, root: Object3D): boolean {
+  let ancestor: Object3D | null = node;
   while (ancestor) {
-    if (ancestor === characterRoot) return true;
+    if (ancestor === root) return true;
     ancestor = ancestor.parent;
   }
   return false;
 }
 
-function findBone(character: Group, name: string): Bone | undefined {
-  const found = character.getObjectByName(name);
-  if (found && found instanceof Bone) {
-    return found;
-  }
-  return undefined;
+function isHeadName(name: string) {
+  if (!name) return false;
+  if (/headtop|_end/i.test(name)) return false;
+  return /head/i.test(name);
+}
+
+function findHeadBone(character: Group, preferredName: string): Object3D | undefined {
+  const exact = character.getObjectByName(preferredName);
+  if (exact) return exact;
+
+  let fromSkeleton: Object3D | undefined;
+  character.traverse((obj) => {
+    if (fromSkeleton) return;
+    const mesh = obj as SkinnedMesh;
+    if (!mesh.isSkinnedMesh || !mesh.skeleton) return;
+
+    const named = mesh.skeleton.getBoneByName(preferredName);
+    if (named) {
+      fromSkeleton = named;
+      return;
+    }
+
+    fromSkeleton = mesh.skeleton.bones.find((bone) => isHeadName(bone.name));
+  });
+  if (fromSkeleton) return fromSkeleton;
+
+  let byName: Object3D | undefined;
+  character.traverse((obj) => {
+    if (!byName && isHeadName(obj.name)) byName = obj;
+  });
+  return byName;
 }

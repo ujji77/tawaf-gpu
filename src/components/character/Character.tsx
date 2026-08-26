@@ -38,7 +38,7 @@ export const Character = ({ position = [0, 0, 0], scale = 1, visible = true }: C
   if (!scene) return null;
 
   return (
-    <group ref={groupRef} position={position} scale={scale} visible={visible} dispose={null}>
+    <group ref={groupRef} position={position} scale={scale} visible={visible && cameraMode !== CameraMode.FPV} dispose={null}>
       {scene && <primitive object={scene} />}
 
       <Suspense fallback={null}>
