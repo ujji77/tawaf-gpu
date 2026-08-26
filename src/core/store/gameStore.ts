@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { Group } from 'three';
 import { AudioListener } from 'three/webgpu';
 import * as THREE from 'three/webgpu';
+import { nextHotspotId } from '../../components/hotspots/config';
 
 export enum CameraMode {
   Follow  = 0,
@@ -60,6 +61,14 @@ interface GameState {
   screenshotArmed: boolean;
   requestScreenshot: () => void;
   completeScreenshot: () => void;
+
+  nearbyHotspotId: string | null;
+  guidedHotspotId: string | null;
+  setNearbyHotspotId: (id: string | null) => void;
+  cycleHotspot: (dir: 1 | -1) => void;
+  goToHotspot: (id: string) => void;
+  cancelGuidedRun: () => void;
+  completeGuidedRun: () => void;
 
   // ===== WebGPU State =====
   gpuError: string | null;
@@ -125,6 +134,21 @@ export const useGameStore = create<GameState>((set, get) => ({
     set({ isHudHidden: true, screenshotArmed: true });
   },
   completeScreenshot: () => set({ isHudHidden: false, screenshotArmed: false }),
+
+  nearbyHotspotId: null,
+  guidedHotspotId: null,
+  setNearbyHotspotId: (id) => set({ nearbyHotspotId: id }),
+  cycleHotspot: (dir) => {
+    const { nearbyHotspotId, guidedHotspotId } = get();
+    const next = nextHotspotId(guidedHotspotId ?? nearbyHotspotId, dir);
+    set({ guidedHotspotId: next });
+  },
+  goToHotspot: (id) => {
+    if (get().nearbyHotspotId === id && !get().guidedHotspotId) return;
+    set({ guidedHotspotId: id });
+  },
+  cancelGuidedRun: () => set({ guidedHotspotId: null }),
+  completeGuidedRun: () => set({ guidedHotspotId: null }),
 
   // ===== WebGPU State =====
   gpuError: null,

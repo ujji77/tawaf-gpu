@@ -15,6 +15,7 @@ import { Floor } from './Floor';
 import { Kaaba } from './Kaaba';
 import { Boundary } from './Boundary';
 import { Character } from './character';
+import { Hotspots } from './hotspots/Hotspots';
 
 export function WorldController() {
     const setActiveTargets = useGameStore((state) => state.setActiveTargets);
@@ -93,6 +94,8 @@ export function WorldController() {
             <AsyncCompile id="kaaba" onReady={setComponentReady} debug={debugMode}>
                 <Kaaba visible={enableKaaba} />
             </AsyncCompile>
+
+            <Hotspots visible={enableKaaba} />
 
             <AsyncCompile id="character" onReady={setComponentReady} debug={debugMode}>
                 <Character position={CHARACTER_SPAWN_POSITION} scale={1} visible={enableCharacter} />

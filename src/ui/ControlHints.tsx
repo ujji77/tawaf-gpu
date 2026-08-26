@@ -219,6 +219,7 @@ export function ControlHints() {
   const skyMode = useGameStore((state) => state.skyMode);
   const toggleSkyMode = useGameStore((state) => state.toggleSkyMode);
   const requestScreenshot = useGameStore((state) => state.requestScreenshot);
+  const cycleHotspot = useGameStore((state) => state.cycleHotspot);
   const isControlEnabled = useGameStore((state) => state.isControlEnabled);
 
   useEffect(() => {
@@ -315,6 +316,8 @@ export function ControlHints() {
           active={quality === 'high'}
           onClick={toggleQuality}
         />
+        <RowButton hint="N" label="Next site" onClick={() => cycleHotspot(1)} />
+        <RowButton hint="P" label="Previous site" onClick={() => cycleHotspot(-1)} />
         <RowButton hint="X" label="Screenshot" onClick={requestScreenshot} />
       </div>
     </nav>

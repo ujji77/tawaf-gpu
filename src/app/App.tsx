@@ -46,6 +46,19 @@ function ScreenshotHotkey() {
     return null;
 }
 
+function HotspotHotkeys() {
+    const cycleHotspot = useGameStore((state) => state.cycleHotspot);
+    useShortcut('n', () => {
+        if (!useGameStore.getState().isControlEnabled) return;
+        cycleHotspot(1);
+    });
+    useShortcut('p', () => {
+        if (!useGameStore.getState().isControlEnabled) return;
+        cycleHotspot(-1);
+    });
+    return null;
+}
+
 export default function App() {
     const [dpr, setDpr] = useState(1.5);
 
@@ -96,6 +109,7 @@ export default function App() {
     return <>
         <LevaWrapper collapsed={true} initialHidden={true} />
         <ScreenshotHotkey />
+        <HotspotHotkeys />
         <DeviceDetector />
         <UI />
         <KeyboardMapper input={input} keyMap={keyBindings} />

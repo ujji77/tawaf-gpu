@@ -9,6 +9,9 @@ import { CameraMode, useGameStore } from '../../../core/store/gameStore';
 import { INITIAL_PHYSICS_STATE, PhysicsState } from '../config';
 import { solveTank } from '../utils/solveTank';
 import { solveCam } from '../utils/solveCam';
+import { solveGuided } from '../utils/solveGuided';
+import { hasMoveInput } from '../utils/hasMoveInput';
+import { getHotspot } from '../../hotspots/config';
 import { input } from '../../../core/input/controls';
 
 export type StepType = 'walk' | 'run' | 'back';
@@ -79,7 +82,22 @@ export function useCharacterPhysics(
     
     const s = state.current;
 
-    if (cameraMode === CameraMode.FPV) {
+    if (hasMoveInput() && useGameStore.getState().guidedHotspotId) {
+      useGameStore.getState().cancelGuidedRun();
+    }
+
+    const guided = getHotspot(useGameStore.getState().guidedHotspotId);
+
+    if (guided) {
+      solveGuided(
+        groupRef.current,
+        s,
+        delta,
+        { x: guided.position[0], z: guided.position[2] },
+        { x: guided.lookAt[0], z: guided.lookAt[2] },
+        () => useGameStore.getState().completeGuidedRun()
+      );
+    } else if (cameraMode === CameraMode.FPV) {
       solveTank(groupRef.current, s, delta, isMobile);
     } else {
       solveCam(groupRef.current, camera, s, delta);
