@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useGameStore } from "../core/store/gameStore";
 import { LoadingScreen } from "./LoadingScreen";
 import AudioButton from "./AudioButton";
@@ -11,6 +12,15 @@ export function UI() {
     const isControlEnabled = useGameStore((state) => state.isControlEnabled);
     const isHudHidden = useGameStore((state) => state.isHudHidden);
     const showHud = isControlEnabled && !isHudHidden;
+
+    useEffect(() => {
+        const root = document.getElementById('leva__root');
+        if (!root) return;
+        root.style.visibility = isHudHidden ? 'hidden' : '';
+        return () => {
+            root.style.visibility = '';
+        };
+    }, [isHudHidden]);
 
     return (
         <div style={{

@@ -46,11 +46,6 @@ function ScreenshotHotkey() {
     return null;
 }
 
-function LevaWithHudHide() {
-    const isHudHidden = useGameStore((state) => state.isHudHidden);
-    return <LevaWrapper collapsed={true} initialHidden={true} forceHidden={isHudHidden} />;
-}
-
 export default function App() {
     const [dpr, setDpr] = useState(1.5);
 
@@ -99,7 +94,7 @@ export default function App() {
     });
 
     return <>
-        <LevaWithHudHide />
+        <LevaWrapper collapsed={true} initialHidden={true} />
         <ScreenshotHotkey />
         <DeviceDetector />
         <UI />
