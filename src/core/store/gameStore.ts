@@ -56,6 +56,11 @@ interface GameState {
   isControlEnabled: boolean; 
   setControlEnabled: (enabled: boolean) => void;
 
+  isHudHidden: boolean;
+  screenshotArmed: boolean;
+  requestScreenshot: () => void;
+  completeScreenshot: () => void;
+
   // ===== WebGPU State =====
   gpuError: string | null;
   setGpuError: (error: string | null) => void;
@@ -112,6 +117,14 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   isControlEnabled: false,
   setControlEnabled: (enabled) => set({ isControlEnabled: enabled }),
+
+  isHudHidden: false,
+  screenshotArmed: false,
+  requestScreenshot: () => {
+    if (get().screenshotArmed) return;
+    set({ isHudHidden: true, screenshotArmed: true });
+  },
+  completeScreenshot: () => set({ isHudHidden: false, screenshotArmed: false }),
 
   // ===== WebGPU State =====
   gpuError: null,

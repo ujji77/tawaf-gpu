@@ -218,6 +218,7 @@ export function ControlHints() {
   const toggleQuality = useGameStore((state) => state.toggleQuality);
   const skyMode = useGameStore((state) => state.skyMode);
   const toggleSkyMode = useGameStore((state) => state.toggleSkyMode);
+  const requestScreenshot = useGameStore((state) => state.requestScreenshot);
   const isControlEnabled = useGameStore((state) => state.isControlEnabled);
 
   useEffect(() => {
@@ -314,6 +315,7 @@ export function ControlHints() {
           active={quality === 'high'}
           onClick={toggleQuality}
         />
+        <RowButton hint="X" label="Screenshot" onClick={requestScreenshot} />
       </div>
     </nav>
   );

@@ -9,6 +9,7 @@ import { smaa } from "three/addons/tsl/display/SMAANode.js";
 
 import { useGameStore, CameraMode } from "../../core/store/gameStore";
 import { useEffectsControls } from "./useEffectsControls";
+import { flushPendingScreenshot } from "../screenshot/flushPendingScreenshot";
 
 export default function Effects() {
   const { isHighQuality, cameraMode, bloom: bloomCfg, dof: dofCfg, toneMapping: tmCfg, smaa: smaaEnabled } = useEffectsControls();
@@ -148,6 +149,7 @@ export default function Effects() {
     }
 
     postProcessingRef.current.render();
+    flushPendingScreenshot(gl.domElement as HTMLCanvasElement);
 
   }, 1);
 

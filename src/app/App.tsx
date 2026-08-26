@@ -37,6 +37,20 @@ function SceneEnvironment() {
     );
 }
 
+function ScreenshotHotkey() {
+    const requestScreenshot = useGameStore((state) => state.requestScreenshot);
+    useShortcut('x', () => {
+        if (!useGameStore.getState().isControlEnabled) return;
+        requestScreenshot();
+    });
+    return null;
+}
+
+function LevaWithHudHide() {
+    const isHudHidden = useGameStore((state) => state.isHudHidden);
+    return <LevaWrapper collapsed={true} initialHidden={true} forceHidden={isHudHidden} />;
+}
+
 export default function App() {
     const [dpr, setDpr] = useState(1.5);
 
@@ -85,7 +99,8 @@ export default function App() {
     });
 
     return <>
-        <LevaWrapper collapsed={true} initialHidden={true} />
+        <LevaWithHudHide />
+        <ScreenshotHotkey />
         <DeviceDetector />
         <UI />
         <KeyboardMapper input={input} keyMap={keyBindings} />
