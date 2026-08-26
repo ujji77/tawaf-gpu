@@ -47,7 +47,7 @@ export default function Effects() {
 
     if (gl) {
       const renderer = gl as unknown as WebGPURenderer;
-      renderer.toneMappingExposure = Math.pow(tmCfg.exposure, 4.0);
+      renderer.toneMappingExposure = tmCfg.exposure;
     }
   }, [bloomCfg.threshold, bloomCfg.strength, bloomCfg.radius, dofCfg, cameraMode, tmCfg.exposure, gl]);
 
@@ -118,7 +118,9 @@ export default function Effects() {
 
     pp.outputNode = finalNode;
 
-    renderer.toneMapping = tmCfg.enabled ? THREE.ReinhardToneMapping : THREE.NoToneMapping;
+    renderer.toneMapping = tmCfg.enabled
+      ? (tmCfg.aces ? THREE.ACESFilmicToneMapping : THREE.ReinhardToneMapping)
+      : THREE.NoToneMapping;
 
     return () => {
       postProcessingRef.current = null;
@@ -133,6 +135,7 @@ export default function Effects() {
     bloomCfg.enabled,
     smaaEnabled,
     tmCfg.enabled,
+    tmCfg.aces,
   ]);
 
   useFrame(() => {

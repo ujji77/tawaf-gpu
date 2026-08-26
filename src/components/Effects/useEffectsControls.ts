@@ -5,7 +5,9 @@ import { useGameStore, CameraMode } from '../../core/store/gameStore';
 export function useEffectsControls() {
   const cameraMode = useGameStore((state) => state.cameraMode);
   const quality = useGameStore((state) => state.quality);
+  const skyMode = useGameStore((state) => state.skyMode);
   const isHighQuality = quality === 'high';
+  const isDay = skyMode === 'day';
 
   const smaaParams = useControls('Effects.SMAA', {
     enabled: { value: false, label: 'Enable SMAA' },
@@ -84,13 +86,14 @@ export function useEffectsControls() {
     smaa: smaaParams.enabled,
     bloom: {
       enabled: bloomParams.enabled,
-      threshold: bloomParams.threshold,
-      strength: bloomParams.strength,
+      threshold: isDay ? Math.max(bloomParams.threshold, 0.82) : bloomParams.threshold,
+      strength: isDay ? bloomParams.strength * 0.22 : bloomParams.strength,
       radius: bloomParams.radius,
     },
     toneMapping: {
       enabled: toneMappingParams.enabled,
-      exposure: toneMappingParams.exposure,
+      aces: isDay,
+      exposure: isDay ? 1 : Math.pow(toneMappingParams.exposure, 4.0),
     },
     dof,
   };

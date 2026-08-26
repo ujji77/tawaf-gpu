@@ -216,6 +216,8 @@ export function ControlHints() {
   const setIsSoundOn = useGameStore((state) => state.setIsSoundOn);
   const quality = useGameStore((state) => state.quality);
   const toggleQuality = useGameStore((state) => state.toggleQuality);
+  const skyMode = useGameStore((state) => state.skyMode);
+  const toggleSkyMode = useGameStore((state) => state.toggleSkyMode);
   const isControlEnabled = useGameStore((state) => state.isControlEnabled);
 
   useEffect(() => {
@@ -299,6 +301,12 @@ export function ControlHints() {
           label={isSoundOn ? 'Sound on' : 'Muted'}
           active={!isSoundOn}
           onClick={() => setIsSoundOn(!isSoundOn)}
+        />
+        <RowButton
+          hint="T"
+          label={skyMode === 'day' ? 'Day' : 'Night'}
+          active={skyMode === 'day'}
+          onClick={toggleSkyMode}
         />
         <RowButton
           hint="·"

@@ -5,6 +5,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
 import MapIcon from '@mui/icons-material/Map';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 export function SideBar() {
     const isMobile = useGameStore((state) => state.isMobile);
@@ -13,7 +15,9 @@ export function SideBar() {
     const setCameraMode = useGameStore((state) => state.setCameraMode);
 
     const quality = useGameStore((state) => state.quality); 
-    const toggleQuality = useGameStore((state) => state.toggleQuality); 
+    const toggleQuality = useGameStore((state) => state.toggleQuality);
+    const skyMode = useGameStore((state) => state.skyMode);
+    const toggleSkyMode = useGameStore((state) => state.toggleSkyMode); 
 
     const cycleCameraMode = () => {
         setCameraMode(((cameraMode + 1) % CAMERA_MODE_COUNT) as CameraMode);
@@ -81,6 +85,14 @@ export function SideBar() {
             zIndex: 50,
         }}>
             
+            <Tooltip title={skyMode === 'day' ? 'Day' : 'Night'} placement="left">
+                <IconButton sx={btnStyle} onClick={toggleSkyMode}>
+                    {skyMode === 'day'
+                        ? <LightModeIcon sx={iconBaseStyle} />
+                        : <DarkModeIcon sx={iconBaseStyle} />}
+                </IconButton>
+            </Tooltip>
+
             <Tooltip title={ qualityTooltip } placement="left">
                 <IconButton sx={btnStyle} onClick={toggleQuality}>
                     <AutoAwesomeIcon sx={qualityIconStyle} />

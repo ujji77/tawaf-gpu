@@ -49,6 +49,10 @@ interface GameState {
   quality: 'low' | 'high';
   toggleQuality: () => void;
 
+  skyMode: 'night' | 'day';
+  setSkyMode: (mode: 'night' | 'day') => void;
+  toggleSkyMode: () => void;
+
   isControlEnabled: boolean; 
   setControlEnabled: (enabled: boolean) => void;
 
@@ -101,6 +105,10 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   quality: 'high',
   toggleQuality: () => set((state) => ({ quality: state.quality === 'high' ? 'low' : 'high' })),
+
+  skyMode: 'night',
+  setSkyMode: (mode) => set({ skyMode: mode }),
+  toggleSkyMode: () => set((state) => ({ skyMode: state.skyMode === 'night' ? 'day' : 'night' })),
 
   isControlEnabled: false,
   setControlEnabled: (enabled) => set({ isControlEnabled: enabled }),

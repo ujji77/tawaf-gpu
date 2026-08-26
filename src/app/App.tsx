@@ -27,11 +27,22 @@ useLoader.preload(AudioLoader, ['/audio/wave01.mp3']);
 
 useGLTF.preload(MODEL_PATHS);
 
+function SceneEnvironment() {
+    const skyMode = useGameStore((state) => state.skyMode);
+    return (
+        <Environment
+            files="/textures/potsdamer_platz_1k_nb.hdr"
+            environmentIntensity={skyMode === 'day' ? 0.45 : 0.5}
+        />
+    );
+}
+
 export default function App() {
     const [dpr, setDpr] = useState(1.5);
 
     const toggleCameraMode = useGameStore((state) => state.toggleCameraMode);
     const toggleViewLock = useGameStore((state) => state.toggleViewLock);
+    const toggleSkyMode = useGameStore((state) => state.toggleSkyMode);
     const setGpuError = useGameStore((state) => state.setGpuError);
     const setAudioListener = useGameStore((state) => state.setAudioListener);
     const gpuError = useGameStore((state) => state.gpuError);
@@ -67,6 +78,10 @@ export default function App() {
 
     useShortcut('v', () => {
         toggleViewLock();
+    });
+
+    useShortcut('t', () => {
+        toggleSkyMode();
     });
 
     return <>
@@ -116,10 +131,7 @@ export default function App() {
                 <Suspense fallback={null}>
                     <color attach="background" args={['#000000']} />
                     <CameraViewControl />
-                    <Environment
-                        files="/textures/potsdamer_platz_1k_nb.hdr"
-                        environmentIntensity={0.5}
-                    />
+                    <SceneEnvironment />
                     <DirectionalLight />
                     <Effects />
                 </Suspense>

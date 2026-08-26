@@ -8,6 +8,7 @@ import { uTime } from '../../core/shaders/uniforms';
 
 export const Background = memo(function Background({ intensity, axis, speed }: { intensity: number, axis: [number, number, number], speed: number }) {
   const { scene } = useThree()
+  const skyMode = useGameStore((state) => state.skyMode)
 
   const uniforms = useMemo(() => ({
     uIntensity: uniform(0.1),
@@ -26,9 +27,14 @@ export const Background = memo(function Background({ intensity, axis, speed }: {
     uniforms.uIntensity.value = cameraMode === CameraMode.FPV ? 1 : intensity
     uniforms.uAxis.value.set(axis[0], axis[1], axis[2]).normalize()
     uniforms.uSpeed.value = speed
-  }, [cameraMode, intensity, axis, speed])
+  }, [cameraMode, intensity, axis, speed, uniforms])
 
   useEffect(() => {
+    if (skyMode === 'day') {
+      scene.backgroundNode = null
+      return
+    }
+
     if (map) {
       const dir = positionWorld.normalize()
       const angle = uTime.mul(uniforms.uSpeed)
@@ -41,9 +47,8 @@ export const Background = memo(function Background({ intensity, axis, speed }: {
     return () => {
       scene.backgroundNode = null
     }
-  }, [scene, map, uniforms])
+  }, [scene, map, uniforms, skyMode])
 
 
   return null
 })
-
