@@ -1,6 +1,6 @@
 // src/components/cosmic/CosmicBeams.tsx
-import { useRef, useMemo, useImperativeHandle, forwardRef, useEffect, useContext } from "react";
-import { useFrame, createPortal } from "@react-three/fiber";
+import { useRef, useMemo, useImperativeHandle, forwardRef, useEffect } from "react";
+import { useFrame } from "@react-three/fiber";
 import * as THREE from "three/webgpu";
 import gsap from "gsap";
 import { MAX_BEAMS, BEAM_HEIGHT, DROP_HEIGHT } from "./config";
@@ -18,10 +18,11 @@ import {
 } from "three/tsl";
 import { uGlobalHueShift } from "../../core/shaders/uniforms";
 import { shiftHSV } from "../../../packages/three-core/src/utils/tsl/color";
-import { BeamSceneContext } from "../../app/App";
+
 function createCosmicBeamMaterial() {
   const material = new THREE.MeshBasicNodeMaterial();
-  material.depthWrite = true;
+  material.depthWrite = false;
+  material.depthTest = true;
   material.blending = THREE.AdditiveBlending;
   material.transparent = true;
 
@@ -74,7 +75,6 @@ export const CosmicBeams = forwardRef<CosmicBeamsRef, {}>((_props, ref) => {
   );
 
   const dummy = useMemo(() => new THREE.Object3D(), []);
-  const beamScene = useContext(BeamSceneContext);
   const { material } = useMemo(() => createCosmicBeamMaterial(), []);
 
   const startBeamAnimation = (
@@ -171,19 +171,17 @@ export const CosmicBeams = forwardRef<CosmicBeamsRef, {}>((_props, ref) => {
     }
   });
 
-  const mesh = (
+  return (
     <instancedMesh
       ref={meshRef}
       args={[undefined, undefined, MAX_BEAMS]}
       frustumCulled={false}
+      renderOrder={10}
     >
       <cylinderGeometry args={[1, 1, BEAM_HEIGHT, 8]} />
       <primitive object={material} attach="material" />
     </instancedMesh>
   );
-
-  if (!beamScene) return mesh;
-  return createPortal(mesh, beamScene);
 });
 
 CosmicBeams.displayName = "CosmicBeams";

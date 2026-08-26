@@ -1,7 +1,7 @@
 import { Environment, PerformanceMonitor, useGLTF } from "@react-three/drei";
 import { LevaWrapper, AudioManager, KeyboardMapper } from "@core";
 import { Canvas, useLoader } from "@react-three/fiber";
-import { useEffect, Suspense, useMemo, useState } from "react";
+import { useEffect, Suspense, useState } from "react";
 import { DirectionalLight } from "../components/DirectionalLight";
 import { WebGPURenderer } from "three/webgpu";
 import Effects from "../components/Effects/Effects";
@@ -10,8 +10,6 @@ import { CameraViewControl } from "../components/camera/CameraViewControl";
 import { DeviceDetector } from "../core/utils/DeviceDetector";
 import { UI } from "../ui/UI";
 import { WorldController } from "../components/WorldController";
-import { createContext } from "react";
-import * as THREE from "three/webgpu";
 import { input, keyBindings } from "../core/input/controls";
 import { useShortcut } from "@core/hooks/useShortcut";
 import { AudioLoader } from 'three';
@@ -29,10 +27,7 @@ useLoader.preload(AudioLoader, ['/audio/wave01.mp3']);
 
 useGLTF.preload(MODEL_PATHS);
 
-export const BeamSceneContext = createContext<THREE.Scene | null>(null);
-
 export default function App() {
-    const beamScene = useMemo(() => new THREE.Scene(), []);
     const [dpr, setDpr] = useState(1.5);
 
     const toggleCameraMode = useGameStore((state) => state.toggleCameraMode);
@@ -113,24 +108,21 @@ export default function App() {
                     onChange={({ factor }) => {
                         const targetDpr = 1 + 1 * factor;
                         setDpr(targetDpr);
-                        // console.log("factor", factor, "target DPR", targetDpr);
                     }}
                 />
 
-                <BeamSceneContext.Provider value={beamScene}>
-                    <WorldController />
+                <WorldController />
 
-                    <Suspense fallback={null}>
-                        <color attach="background" args={['#000000']} />
-                        <CameraViewControl />
-                        <Environment
-                            files="/textures/potsdamer_platz_1k_nb.hdr"
-                            environmentIntensity={0.5}
-                        />
-                        <DirectionalLight />
-                        <Effects />
-                    </Suspense>
-                </BeamSceneContext.Provider>
+                <Suspense fallback={null}>
+                    <color attach="background" args={['#000000']} />
+                    <CameraViewControl />
+                    <Environment
+                        files="/textures/potsdamer_platz_1k_nb.hdr"
+                        environmentIntensity={0.5}
+                    />
+                    <DirectionalLight />
+                    <Effects />
+                </Suspense>
             </Canvas>
         )}
     </>
