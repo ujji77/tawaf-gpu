@@ -16,18 +16,6 @@ const Key = ({ children }: { children: React.ReactNode }) => (
     </span>
 );
 
-const MouseIcon = () => (
-    <span style={{
-        display: 'inline-block', position: 'relative', width: '12px', height: '18px', margin: '0 4px',
-        border: '1.5px solid #ccc', borderRadius: '6px', verticalAlign: 'middle', opacity: 0.8
-    }}>
-        <span style={{
-            position: 'absolute', top: '3px', left: '50%', transform: 'translateX(-50%)',
-            width: '1.5px', height: '4px', background: '#ccc', borderRadius: '1px'
-        }} />
-    </span>
-);
-
 const InstructionRow = ({ input, label }: { input: React.ReactNode, label: string }) => (
     <div style={{ display: 'flex', alignItems: 'center' }}>
         {input}
@@ -36,6 +24,66 @@ const InstructionRow = ({ input, label }: { input: React.ReactNode, label: strin
         </span>
     </div>
 );
+
+const GitHubIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8" />
+    </svg>
+);
+
+const REPOS = [
+    {
+        href: 'https://github.com/ujji77/tawaf-gpu',
+        label: 'tawaf-gpu',
+        hint: 'this repo · fork it',
+    },
+    {
+        href: 'https://github.com/momentchan/false-earth',
+        label: 'false-earth',
+        hint: 'original engine',
+    },
+] as const;
+
+function RepoLinks({ compact }: { compact?: boolean }) {
+    return (
+        <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: compact ? '8px 16px' : '12px 22px',
+            justifyContent: 'flex-start',
+            marginTop: compact ? '0.85rem' : '1.4rem',
+        }}>
+            {REPOS.map((repo) => (
+                <a
+                    key={repo.href}
+                    href={repo.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        color: '#ddd',
+                        textDecoration: 'none',
+                        fontSize: '0.68rem',
+                        letterSpacing: '0.06em',
+                        opacity: 0.9,
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = '#fff'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.color = '#ddd'; }}
+                >
+                    <GitHubIcon />
+                    <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px', lineHeight: 1.2 }}>
+                        <span style={{ fontWeight: 600 }}>{repo.label}</span>
+                        <span style={{ fontSize: '0.58rem', letterSpacing: '0.04em', color: '#888', fontWeight: 400 }}>
+                            {repo.hint}
+                        </span>
+                    </span>
+                </a>
+            ))}
+        </div>
+    );
+}
 
 // --- Main Component ---
 
@@ -138,16 +186,18 @@ export function LoadingScreen() {
 
     const entryContainerStyle: React.CSSProperties = {
         opacity: 1,
-        maxWidth: isMobileLandscape ? '80%' : (isMobile ? '100%' : '600px'),
-        padding: isMobileLandscape ? '20px' : '40px',
+        maxWidth: isMobileLandscape ? '92%' : (isMobile ? '100%' : '640px'),
+        padding: isMobileLandscape ? '16px 20px' : (isMobile ? '28px 24px' : '40px'),
         animation: 'fadeIn 2s ease',
         display: 'flex',
-        // SWITCH LAYOUT: Row for landscape, Column for portrait
         flexDirection: isMobileLandscape ? 'row' : 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: isMobileLandscape ? '40px' : '0px',
-        height: isMobileLandscape ? '100%' : 'auto'
+        gap: isMobileLandscape ? '32px' : '0px',
+        height: isMobileLandscape ? '100%' : 'auto',
+        maxHeight: '100%',
+        overflowY: 'auto',
+        boxSizing: 'border-box',
     };
 
     const playButtonStyle: React.CSSProperties = {
@@ -179,35 +229,51 @@ export function LoadingScreen() {
                     <div style={{
                         fontSize: '1rem', fontWeight: 'bold',
                         letterSpacing: isMobile ? '0.3rem' : '0.5rem',
-                        marginBottom: isMobileLandscape ? '1rem' : '2rem',
+                        marginBottom: isMobileLandscape ? '0.35rem' : '0.55rem',
                     }}>
-                        FALSE EARTH
+                        TAWAF
+                    </div>
+                    <div style={{
+                        fontSize: isMobileLandscape ? '0.58rem' : '0.68rem',
+                        letterSpacing: '0.16em',
+                        textTransform: 'uppercase',
+                        color: '#888',
+                        marginBottom: isMobileLandscape ? '0.9rem' : '1.6rem',
+                    }}>
+                        an open-source learning scene
                     </div>
 
                     {/* Intro Text */}
                     <div style={{
                         textAlign: 'left',
                         display: 'inline-block',
-                        lineHeight: '1.5', color: '#ccc',
-                        marginBottom: isMobileLandscape ? '0' : '3rem',
-                        fontSize: isMobileLandscape ? '0.75rem' : 'inherit',
+                        lineHeight: isMobileLandscape ? '1.45' : '1.65',
+                        color: '#ccc',
+                        marginBottom: isMobileLandscape ? '0' : '1.5rem',
+                        fontSize: isMobileLandscape ? '0.72rem' : '0.86rem',
                     }}>
-                        <p>
-                            After drifting beyond the edge of space, the journey reaches ground again.
-                            A surface extends in every direction, without a visible boundary.
-                            No matter how far it continues, the horizon does not draw closer.
+                        <p style={{ margin: '0 0 0.85em' }}>
+                            Tawaf is the seven circuits around the Kaaba that open and close
+                            Hajj and Umrah. This demo puts you on the mataf so you can walk
+                            that ground and meet the sites as they appear — not as a list,
+                            but as places you stand in.
                         </p>
-
-                        <p>
-                            With each step, something descends and alters the surface, leaving traces behind.
-                            The drift does not end here; it continues in another form.
-                        </p>
-{/* 
-                        {!gpuError && (
-                            <p>
-                                As you travel forward, the ground begins to change beneath you, leaving visible traces of passage behind.
+                        {!isMobileLandscape && (
+                            <p style={{ margin: '0 0 0.85em' }}>
+                                Markers sit at the Black Stone, the Kaaba door, Maqam Ibrahim,
+                                Hijr Ismail, and the Yemeni Corner. Walk into one for a short
+                                note, or press <span style={{ color: '#eee' }}>N</span> to be
+                                guided around the circuit. Fork the scene, rewrite the cards,
+                                add stops — the lesson is a config file.
                             </p>
-                        )} */}
+                        )}
+                        {isMobileLandscape && (
+                            <p style={{ margin: '0 0 0.85em' }}>
+                                Approach a marker for a short note, or press N to be guided
+                                around the circuit. Fork it and write your own lesson.
+                            </p>
+                        )}
+                        <RepoLinks compact={isMobileLandscape} />
                     </div>
                 </div>
 
@@ -268,10 +334,9 @@ export function LoadingScreen() {
                                 </>
                             ) : (
                                 <>
-                                    <InstructionRow input={<><Key>W</Key><Key>A</Key><Key>S</Key><Key>D</Key></>} label="MOVE" />
+                                    <InstructionRow input={<><Key>↑</Key><Key>←</Key><Key>↓</Key><Key>→</Key></>} label="MOVE" />
                                     <InstructionRow input={<Key>SHIFT</Key>} label="RUN" />
-                                    <InstructionRow input={<Key>C</Key>} label="CAM" />
-                                    <InstructionRow input={<MouseIcon />} label="LOOK" />
+                                    <InstructionRow input={<Key>N</Key>} label="SITES" />
                                 </>
                             )
                         )}
