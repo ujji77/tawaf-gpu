@@ -3,6 +3,7 @@ import { Group } from 'three';
 import { AudioListener } from 'three/webgpu';
 import * as THREE from 'three/webgpu';
 import { nextHotspotId } from '../../components/hotspots/config';
+import { CHARACTER_SPAWN_POSITION } from '../worldConfig';
 
 export enum CameraMode {
   Follow  = 0,
@@ -69,6 +70,8 @@ interface GameState {
   goToHotspot: (id: string) => void;
   cancelGuidedRun: () => void;
   completeGuidedRun: () => void;
+  sessionEpoch: number;
+  restartSession: () => void;
 
   // ===== WebGPU State =====
   gpuError: string | null;
@@ -149,6 +152,26 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
   cancelGuidedRun: () => set({ guidedHotspotId: null }),
   completeGuidedRun: () => set({ guidedHotspotId: null }),
+  sessionEpoch: 0,
+  restartSession: () => {
+    const character = get().characterRef?.current;
+    if (character) {
+      character.position.set(
+        CHARACTER_SPAWN_POSITION[0],
+        CHARACTER_SPAWN_POSITION[1],
+        CHARACTER_SPAWN_POSITION[2]
+      );
+      character.rotation.set(0, 0, 0);
+    }
+    set({
+      guidedHotspotId: null,
+      nearbyHotspotId: null,
+      cameraMode: CameraMode.Follow,
+      isGameStarted: false,
+      isControlEnabled: false,
+      sessionEpoch: get().sessionEpoch + 1,
+    });
+  },
 
   // ===== WebGPU State =====
   gpuError: null,

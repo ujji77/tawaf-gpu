@@ -31,6 +31,7 @@ export function CameraViewControl({ boneName = HEAD_BONE_NAME }: Props) {
   const isGameLoaded = useGameStore((state) => state.isGameStarted);
   const isControlEnabled = useGameStore((state) => state.isControlEnabled);
   const setControlEnabled = useGameStore((state) => state.setControlEnabled);
+  const sessionEpoch = useGameStore((state) => state.sessionEpoch);
 
   const controlsRef = useRef<CameraControls>(null);
   const isBirdsEye = cameraMode === CameraMode.BirdsEye;
@@ -135,6 +136,11 @@ export function CameraViewControl({ boneName = HEAD_BONE_NAME }: Props) {
       resetCamera(false);
     }
   }, [cameraMode, isControlEnabled, resetCamera, applyBirdsEye]);
+
+  useEffect(() => {
+    if (sessionEpoch === 0 || !isControlEnabled || cameraMode === CameraMode.FPV) return;
+    resetCamera(false);
+  }, [sessionEpoch]);
 
   // CameraControls keeps applying its own damped transform to the camera every frame even
   // when `enabled={false}` (that prop only gates its pointer listeners) - it has to be fully

@@ -9,33 +9,32 @@ const GLASS =
 const HAIRLINE = '1px solid rgba(255, 255, 255, 0.12)';
 
 const CAMERA_MODE_LABEL: Record<CameraMode, string> = {
-  [CameraMode.Follow]: 'Third Person',
-  [CameraMode.FPV]: 'First Person',
+  [CameraMode.Follow]: '3rd person',
+  [CameraMode.FPV]: '1st person',
   [CameraMode.Detached]: 'Tripod',
-  [CameraMode.BirdsEye]: "Bird's Eye",
+  [CameraMode.BirdsEye]: "Bird's eye",
 };
 
 const railStyle: CSSProperties = {
   position: 'fixed',
-  top: '18px',
-  right: '18px',
-  bottom: '18px',
-  width: '176px',
+  top: '14px',
+  right: '14px',
+  bottom: '14px',
+  width: '168px',
   zIndex: 50,
   pointerEvents: 'auto',
   display: 'flex',
   flexDirection: 'column',
-  gap: '22px',
-  padding: '18px 14px',
+  gap: '10px',
+  padding: '12px 10px',
   boxSizing: 'border-box',
-  overflowY: 'auto',
-  scrollbarWidth: 'none',
+  overflow: 'hidden',
   background:
     'linear-gradient(180deg, rgba(8,10,14,0.52) 0%, rgba(6,8,12,0.62) 100%)',
   backdropFilter: GLASS,
   WebkitBackdropFilter: GLASS,
   border: HAIRLINE,
-  borderRadius: '24px',
+  borderRadius: '20px',
   boxShadow:
     'inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(255,255,255,0.04)',
   color: 'rgba(255,255,255,0.82)',
@@ -44,27 +43,27 @@ const railStyle: CSSProperties = {
 };
 
 const sectionLabelStyle: CSSProperties = {
-  fontSize: '9px',
+  fontSize: '8px',
   fontWeight: 600,
-  letterSpacing: '0.18em',
+  letterSpacing: '0.16em',
   textTransform: 'uppercase',
   color: 'rgba(255,255,255,0.38)',
-  marginBottom: '10px',
+  marginBottom: '6px',
 };
 
 const keyBase = (active: boolean, extra?: CSSProperties): CSSProperties => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '34px',
-  height: '34px',
-  fontSize: '12px',
+  width: '28px',
+  height: '28px',
+  fontSize: '11px',
   fontWeight: 600,
   letterSpacing: '0.04em',
   color: active ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.72)',
   background: active ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.06)',
   border: active ? '1px solid rgba(255,255,255,0.28)' : HAIRLINE,
-  borderRadius: '11px',
+  borderRadius: '9px',
   cursor: 'pointer',
   touchAction: 'none',
   transition: 'background 0.16s ease, border-color 0.16s ease, color 0.16s ease',
@@ -126,7 +125,7 @@ function Pad({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <HoldKey action={up} label={upLabel} />
-      <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
+      <div style={{ display: 'flex', gap: '5px', marginTop: '5px' }}>
         <HoldKey action={left} label={leftLabel} />
         <HoldKey action={down} label={downLabel} />
         <HoldKey action={right} label={rightLabel} />
@@ -155,12 +154,12 @@ function RowButton({
         alignItems: 'center',
         gap: '10px',
         width: '100%',
-        height: '36px',
-        padding: '0 8px',
+        height: '28px',
+        padding: '0 6px',
         margin: 0,
         background: active ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.04)',
         border: HAIRLINE,
-        borderRadius: '12px',
+        borderRadius: '10px',
         color: 'rgba(255,255,255,0.78)',
         fontFamily: FONT,
         cursor: 'pointer',
@@ -170,10 +169,10 @@ function RowButton({
       <span
         style={{
           ...keyBase(!!active, {
-            width: '22px',
-            height: '22px',
-            fontSize: '10px',
-            borderRadius: '7px',
+            width: '20px',
+            height: '20px',
+            fontSize: '9px',
+            borderRadius: '6px',
             flexShrink: 0,
             cursor: 'inherit',
           }),
@@ -183,7 +182,7 @@ function RowButton({
       </span>
       <span
         style={{
-          fontSize: '11px',
+          fontSize: '10px',
           fontWeight: 500,
           letterSpacing: '0.04em',
           overflow: 'hidden',
@@ -220,6 +219,7 @@ export function ControlHints() {
   const toggleSkyMode = useGameStore((state) => state.toggleSkyMode);
   const requestScreenshot = useGameStore((state) => state.requestScreenshot);
   const cycleHotspot = useGameStore((state) => state.cycleHotspot);
+  const restartSession = useGameStore((state) => state.restartSession);
   const isControlEnabled = useGameStore((state) => state.isControlEnabled);
 
   useEffect(() => {
@@ -255,10 +255,10 @@ export function ControlHints() {
           label="⇧  Run"
           style={{
             width: '100%',
-            height: '30px',
+            height: '26px',
             fontSize: '10px',
             letterSpacing: '0.08em',
-            marginTop: '8px',
+            marginTop: '6px',
           }}
         />
       </Section>
@@ -274,23 +274,23 @@ export function ControlHints() {
           leftLabel="A"
           rightLabel="D"
         />
-        <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+        <div style={{ display: 'flex', gap: '5px', marginTop: '6px' }}>
           <HoldKey
             action="ZoomOut"
             label="Q  −"
-            style={{ flex: 1, width: 'auto', height: '30px', fontSize: '10px' }}
+            style={{ flex: 1, width: 'auto', height: '26px', fontSize: '10px' }}
           />
           <HoldKey
             action="ZoomIn"
             label="E  +"
-            style={{ flex: 1, width: 'auto', height: '30px', fontSize: '10px' }}
+            style={{ flex: 1, width: 'auto', height: '26px', fontSize: '10px' }}
           />
         </div>
       </Section>
 
-      <div style={{ flex: 1, minHeight: '8px' }} />
+      <div style={{ flex: 1, minHeight: 0 }} />
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
         <RowButton
           hint="V"
           label={isViewLocked ? 'View lock' : 'View free'}
@@ -316,9 +316,16 @@ export function ControlHints() {
           active={quality === 'high'}
           onClick={toggleQuality}
         />
-        <RowButton hint="N" label="Next site" onClick={() => cycleHotspot(1)} />
-        <RowButton hint="P" label="Previous site" onClick={() => cycleHotspot(-1)} />
+        <div style={{ display: 'flex', gap: '5px' }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <RowButton hint="P" label="Prev" onClick={() => cycleHotspot(-1)} />
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <RowButton hint="N" label="Next" onClick={() => cycleHotspot(1)} />
+          </div>
+        </div>
         <RowButton hint="X" label="Screenshot" onClick={requestScreenshot} />
+        <RowButton hint="R" label="Restart" onClick={restartSession} />
       </div>
     </nav>
   );

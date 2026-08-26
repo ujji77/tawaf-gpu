@@ -48,6 +48,7 @@ function ScreenshotHotkey() {
 
 function HotspotHotkeys() {
     const cycleHotspot = useGameStore((state) => state.cycleHotspot);
+    const restartSession = useGameStore((state) => state.restartSession);
     useShortcut('n', () => {
         if (!useGameStore.getState().isControlEnabled) return;
         cycleHotspot(1);
@@ -55,6 +56,10 @@ function HotspotHotkeys() {
     useShortcut('p', () => {
         if (!useGameStore.getState().isControlEnabled) return;
         cycleHotspot(-1);
+    });
+    useShortcut('r', () => {
+        if (!useGameStore.getState().isControlEnabled) return;
+        restartSession();
     });
     return null;
 }

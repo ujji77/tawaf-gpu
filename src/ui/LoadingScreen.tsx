@@ -46,6 +46,7 @@ export function LoadingScreen() {
     const readyStatus = useGameStore((state) => state.readyStatus);
     const isMobile = useGameStore((state) => state.isMobile);
     const setIsGameStarted = useGameStore((state) => state.setIsGameStarted);
+    const isGameStarted = useGameStore((state) => state.isGameStarted);
     const gpuError = useGameStore((state) => state.gpuError);
 
     // Local State
@@ -81,6 +82,21 @@ export function LoadingScreen() {
             return () => clearTimeout(t);
         }
     }, [active, loaded, total]);
+
+    useEffect(() => {
+        if (isGameStarted) return;
+        setIsVisible(true);
+        if (!active && loaded === total && total > 0) {
+            setIsReadyToStart(true);
+        }
+        if (animationRef.current) {
+            animationRef.current.kill();
+            animationRef.current = null;
+        }
+        if (containerRef.current) {
+            gsap.set(containerRef.current, { opacity: 1 });
+        }
+    }, [isGameStarted, active, loaded, total]);
 
     const handleStart = () => {
         if (!isReadyToStart || gpuError) return;
