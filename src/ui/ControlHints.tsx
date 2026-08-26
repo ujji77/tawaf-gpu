@@ -3,11 +3,10 @@ import { input } from '../core/input/controls';
 import type { GameAction } from '../core/input/controls';
 import { useGameStore, CameraMode, CAMERA_MODE_COUNT } from '../core/store/gameStore';
 
-const PANEL_BG = 'rgba(8, 8, 8, 0.55)';
-const KEY_BG = 'rgba(255, 255, 255, 0.08)';
-const KEY_BG_ACTIVE = 'rgba(255, 255, 255, 0.38)';
-const KEY_BORDER = '1px solid rgba(255, 255, 255, 0.18)';
-const TEXT_SHADOW = '0 1px 3px rgba(0, 0, 0, 0.85)';
+const FONT = 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif';
+const GLASS =
+  'blur(28px) saturate(160%)';
+const HAIRLINE = '1px solid rgba(255, 255, 255, 0.12)';
 
 const CAMERA_MODE_LABEL: Record<CameraMode, string> = {
   [CameraMode.Follow]: 'Third Person',
@@ -16,51 +15,59 @@ const CAMERA_MODE_LABEL: Record<CameraMode, string> = {
   [CameraMode.BirdsEye]: "Bird's Eye",
 };
 
-const panelStyle: CSSProperties = {
+const railStyle: CSSProperties = {
   position: 'fixed',
-  left: '16px',
-  bottom: '16px',
+  top: '18px',
+  right: '18px',
+  bottom: '18px',
+  width: '176px',
   zIndex: 50,
   pointerEvents: 'auto',
   display: 'flex',
   flexDirection: 'column',
-  gap: '10px',
-  padding: '12px 14px 12px',
-  backgroundColor: PANEL_BG,
-  backdropFilter: 'blur(12px)',
-  border: KEY_BORDER,
-  borderRadius: '14px',
-  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+  gap: '22px',
+  padding: '18px 14px',
+  boxSizing: 'border-box',
+  overflowY: 'auto',
+  scrollbarWidth: 'none',
+  background:
+    'linear-gradient(180deg, rgba(8,10,14,0.52) 0%, rgba(6,8,12,0.62) 100%)',
+  backdropFilter: GLASS,
+  WebkitBackdropFilter: GLASS,
+  border: HAIRLINE,
+  borderRadius: '24px',
+  boxShadow:
+    'inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(255,255,255,0.04)',
+  color: 'rgba(255,255,255,0.82)',
+  fontFamily: FONT,
   userSelect: 'none',
 };
 
-const sectionTitleStyle: CSSProperties = {
+const sectionLabelStyle: CSSProperties = {
   fontSize: '9px',
-  fontWeight: 700,
-  letterSpacing: '1.4px',
-  color: 'rgba(255,255,255,0.55)',
-  textShadow: TEXT_SHADOW,
-  textAlign: 'center',
-  marginBottom: '6px',
+  fontWeight: 600,
+  letterSpacing: '0.18em',
+  textTransform: 'uppercase',
+  color: 'rgba(255,255,255,0.38)',
+  marginBottom: '10px',
 };
 
-const keyStyle = (active: boolean, extra?: CSSProperties): CSSProperties => ({
+const keyBase = (active: boolean, extra?: CSSProperties): CSSProperties => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '36px',
-  height: '36px',
-  fontSize: '13px',
-  fontWeight: 700,
-  color: 'white',
-  textShadow: TEXT_SHADOW,
-  backgroundColor: active ? KEY_BG_ACTIVE : KEY_BG,
-  border: KEY_BORDER,
-  borderRadius: '8px',
+  width: '34px',
+  height: '34px',
+  fontSize: '12px',
+  fontWeight: 600,
+  letterSpacing: '0.04em',
+  color: active ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.72)',
+  background: active ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.06)',
+  border: active ? '1px solid rgba(255,255,255,0.28)' : HAIRLINE,
+  borderRadius: '11px',
   cursor: 'pointer',
   touchAction: 'none',
-  transition: 'background-color 0.08s ease, transform 0.08s ease',
-  transform: active ? 'translateY(1px)' : 'none',
+  transition: 'background 0.16s ease, border-color 0.16s ease, color 0.16s ease',
   ...extra,
 });
 
@@ -87,7 +94,7 @@ function HoldKey({
 
   return (
     <div
-      style={keyStyle(active, style)}
+      style={keyBase(active, style)}
       onPointerDown={press}
       onPointerUp={release}
       onPointerCancel={release}
@@ -98,7 +105,6 @@ function HoldKey({
 }
 
 function Pad({
-  title,
   up,
   down,
   left,
@@ -108,7 +114,6 @@ function Pad({
   leftLabel,
   rightLabel,
 }: {
-  title: string;
   up: GameAction;
   down: GameAction;
   left: GameAction;
@@ -120,13 +125,83 @@ function Pad({
 }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={sectionTitleStyle}>{title}</div>
       <HoldKey action={up} label={upLabel} />
-      <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
+      <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
         <HoldKey action={left} label={leftLabel} />
         <HoldKey action={down} label={downLabel} />
         <HoldKey action={right} label={rightLabel} />
       </div>
+    </div>
+  );
+}
+
+function RowButton({
+  hint,
+  label,
+  active,
+  onClick,
+}: {
+  hint: string;
+  label: string;
+  active?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        width: '100%',
+        height: '36px',
+        padding: '0 8px',
+        margin: 0,
+        background: active ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.04)',
+        border: HAIRLINE,
+        borderRadius: '12px',
+        color: 'rgba(255,255,255,0.78)',
+        fontFamily: FONT,
+        cursor: 'pointer',
+        textAlign: 'left',
+      }}
+    >
+      <span
+        style={{
+          ...keyBase(!!active, {
+            width: '22px',
+            height: '22px',
+            fontSize: '10px',
+            borderRadius: '7px',
+            flexShrink: 0,
+            cursor: 'inherit',
+          }),
+        }}
+      >
+        {hint}
+      </span>
+      <span
+        style={{
+          fontSize: '11px',
+          fontWeight: 500,
+          letterSpacing: '0.04em',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {label}
+      </span>
+    </button>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <div style={sectionLabelStyle}>{title}</div>
+      {children}
     </div>
   );
 }
@@ -139,7 +214,8 @@ export function ControlHints() {
   const toggleViewLock = useGameStore((state) => state.toggleViewLock);
   const isSoundOn = useGameStore((state) => state.isSoundOn);
   const setIsSoundOn = useGameStore((state) => state.setIsSoundOn);
-
+  const quality = useGameStore((state) => state.quality);
+  const toggleQuality = useGameStore((state) => state.toggleQuality);
   const isControlEnabled = useGameStore((state) => state.isControlEnabled);
 
   useEffect(() => {
@@ -158,109 +234,79 @@ export function ControlHints() {
   };
 
   return (
-    <div style={panelStyle}>
-      <div style={{ display: 'flex', gap: '18px', alignItems: 'flex-start' }}>
-        <div>
-          <Pad
-            title="MOVE"
-            up="MoveForward"
-            down="MoveBackward"
-            left="RotateLeft"
-            right="RotateRight"
-            upLabel="↑"
-            downLabel="↓"
-            leftLabel="←"
-            rightLabel="→"
+    <nav style={railStyle} aria-label="Controls">
+      <Section title="Move">
+        <Pad
+          up="MoveForward"
+          down="MoveBackward"
+          left="RotateLeft"
+          right="RotateRight"
+          upLabel="↑"
+          downLabel="↓"
+          leftLabel="←"
+          rightLabel="→"
+        />
+        <HoldKey
+          action="Run"
+          label="⇧  Run"
+          style={{
+            width: '100%',
+            height: '30px',
+            fontSize: '10px',
+            letterSpacing: '0.08em',
+            marginTop: '8px',
+          }}
+        />
+      </Section>
+
+      <Section title="Camera">
+        <Pad
+          up="CameraForward"
+          down="CameraBackward"
+          left="CameraLeft"
+          right="CameraRight"
+          upLabel="W"
+          downLabel="S"
+          leftLabel="A"
+          rightLabel="D"
+        />
+        <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+          <HoldKey
+            action="ZoomOut"
+            label="Q  −"
+            style={{ flex: 1, width: 'auto', height: '30px', fontSize: '10px' }}
           />
           <HoldKey
-            action="Run"
-            label="⇧  RUN"
-            style={{ width: '116px', height: '28px', fontSize: '10px', marginTop: '8px' }}
+            action="ZoomIn"
+            label="E  +"
+            style={{ flex: 1, width: 'auto', height: '30px', fontSize: '10px' }}
           />
         </div>
+      </Section>
 
-        <div>
-          <Pad
-            title="CAMERA"
-            up="CameraForward"
-            down="CameraBackward"
-            left="CameraLeft"
-            right="CameraRight"
-            upLabel="W"
-            downLabel="S"
-            leftLabel="A"
-            rightLabel="D"
-          />
-          <div style={{ display: 'flex', gap: '4px', marginTop: '8px' }}>
-            <HoldKey
-              action="ZoomIn"
-              label="Q  IN"
-              style={{ width: '56px', height: '28px', fontSize: '10px' }}
-            />
-            <HoldKey
-              action="ZoomOut"
-              label="E  OUT"
-              style={{ width: '56px', height: '28px', fontSize: '10px' }}
-            />
-          </div>
-          <button
-            type="button"
-            onClick={toggleViewLock}
-            style={{
-              ...keyStyle(isViewLocked, {
-                width: '116px',
-                height: '28px',
-                fontSize: '10px',
-                letterSpacing: '0.4px',
-                marginTop: '8px',
-                cursor: 'pointer',
-              }),
-              border: KEY_BORDER,
-              fontFamily: 'inherit',
-            }}
-          >
-            V · {isViewLocked ? 'LOCK' : 'FREE'}
-          </button>
-        </div>
-      </div>
+      <div style={{ flex: 1, minHeight: '8px' }} />
 
-      <div style={{ display: 'flex', gap: '6px' }}>
-        <button
-          type="button"
-          onClick={cycleCamera}
-          style={{
-            ...keyStyle(false, {
-              width: 'auto',
-              flex: 1,
-              height: '28px',
-              fontSize: '10px',
-              letterSpacing: '0.4px',
-              cursor: 'pointer',
-            }),
-            border: KEY_BORDER,
-            fontFamily: 'inherit',
-          }}
-        >
-          C · {CAMERA_MODE_LABEL[cameraMode]}
-        </button>
-        <button
-          type="button"
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <RowButton
+          hint="V"
+          label={isViewLocked ? 'View lock' : 'View free'}
+          active={isViewLocked}
+          onClick={toggleViewLock}
+        />
+        <RowButton hint="C" label={CAMERA_MODE_LABEL[cameraMode]} onClick={cycleCamera} />
+        <RowButton
+          hint="M"
+          label={isSoundOn ? 'Sound on' : 'Muted'}
+          active={!isSoundOn}
           onClick={() => setIsSoundOn(!isSoundOn)}
-          style={{
-            ...keyStyle(!isSoundOn, {
-              width: '64px',
-              height: '28px',
-              fontSize: '10px',
-              letterSpacing: '0.4px',
-              cursor: 'pointer',
-            }),
-            border: KEY_BORDER,
-            fontFamily: 'inherit',
-          }}
-        >
-          M · {isSoundOn ? 'MUTE' : 'UNMUTE'}
-        </button>
+        />
+        <RowButton
+          hint="·"
+          label={quality === 'high' ? 'Quality' : 'Performance'}
+          active={quality === 'high'}
+          onClick={toggleQuality}
+        />
       </div>
-    </div>
+    </nav>
   );
 }

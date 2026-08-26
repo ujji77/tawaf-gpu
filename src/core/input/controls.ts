@@ -19,6 +19,6 @@ export const keyBindings: Record<string, GameAction> = {
   KeyS: 'CameraBackward',
   KeyA: 'CameraLeft',
   KeyD: 'CameraRight',
-  KeyQ: 'ZoomIn',
-  KeyE: 'ZoomOut',
+  KeyQ: 'ZoomOut',
+  KeyE: 'ZoomIn',
 };

@@ -32,7 +32,7 @@ export function UI() {
                 transition: `opacity 0.5s ease, visibility 0s linear ${isControlEnabled ? '0s' : '0.5s'}`
             }}>
                 <AudioButton />
-                <SideBar />
+                {isMobile && <SideBar />}
 
                 {isMobile &&
                     <TouchJoystick

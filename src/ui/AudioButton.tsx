@@ -16,6 +16,7 @@ export default function AudioButton() {
     const isGameStarted = useGameStore((state) => state.isGameStarted);
     const isSoundOn = useGameStore((state) => state.isSoundOn);
     const setIsSoundOn = useGameStore((state) => state.setIsSoundOn);
+    const isMobile = useGameStore((state) => state.isMobile);
 
     const radius = 10;
     const size = 45;
@@ -34,7 +35,18 @@ export default function AudioButton() {
         <WebGPUCanvas
             width={size}
             height={size}
-            style={{ position: 'fixed', bottom: 0, right: 0, zIndex: 20 }}
+            style={{
+                position: 'fixed',
+                zIndex: 20,
+                ...(isMobile
+                    ? { bottom: 0, right: 0 }
+                    : {
+                        left: 0,
+                        bottom: 0,
+                        opacity: 0,
+                        pointerEvents: 'none',
+                    }),
+            }}
         >
             {/* Interaction Layer (Invisible Hitbox) */}
             <mesh
