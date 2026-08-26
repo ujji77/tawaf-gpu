@@ -135,6 +135,8 @@ export function ControlHints() {
   const [, setTick] = useState(0);
   const cameraMode = useGameStore((state) => state.cameraMode);
   const setCameraMode = useGameStore((state) => state.setCameraMode);
+  const isViewLocked = useGameStore((state) => state.isViewLocked);
+  const toggleViewLock = useGameStore((state) => state.toggleViewLock);
   const isSoundOn = useGameStore((state) => state.isSoundOn);
   const setIsSoundOn = useGameStore((state) => state.setIsSoundOn);
 
@@ -201,6 +203,24 @@ export function ControlHints() {
               style={{ width: '56px', height: '28px', fontSize: '10px' }}
             />
           </div>
+          <button
+            type="button"
+            onClick={toggleViewLock}
+            style={{
+              ...keyStyle(isViewLocked, {
+                width: '116px',
+                height: '28px',
+                fontSize: '10px',
+                letterSpacing: '0.4px',
+                marginTop: '8px',
+                cursor: 'pointer',
+              }),
+              border: KEY_BORDER,
+              fontFamily: 'inherit',
+            }}
+          >
+            V · {isViewLocked ? 'LOCK' : 'FREE'}
+          </button>
         </div>
       </div>
 

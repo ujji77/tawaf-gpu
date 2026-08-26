@@ -4,6 +4,18 @@ import { useFPVCamera } from './hooks/useFPVCamera';
 import { useFollowCamera } from './hooks/useFollowCamera';
 import { useKeyboardCamera } from './hooks/useKeyboardCamera';
 import { HEAD_BONE_NAME } from '../character/config';
+import {
+  CAMERA_POSITION,
+  CAMERA_LOOKAT,
+  FOLLOW_LOOKAT_Y,
+  FOLLOW_LOCK_DISTANCE,
+  FOLLOW_LOCK_HEIGHT,
+  BIRDS_EYE_POSITION,
+  BIRDS_EYE_LOOKAT,
+  BIRDS_EYE_POLAR,
+  BIRDS_EYE_MIN_DISTANCE,
+  BIRDS_EYE_MAX_DISTANCE,
+} from './config';
 import { useCallback, useEffect, useRef } from 'react';
 import * as THREE from 'three/webgpu';
 
@@ -11,17 +23,9 @@ type Props = {
   boneName?: string;
 };
 
-export const CAMERA_POSITION = new THREE.Vector3(-4, 2, -0.5);
-export const CAMERA_LOOKAT = new THREE.Vector3(0, 1, 0);
-
-export const BIRDS_EYE_POSITION = new THREE.Vector3(0, 48, 11);
-export const BIRDS_EYE_LOOKAT = new THREE.Vector3(0, 0, 0);
-export const BIRDS_EYE_POLAR = 0.22;
-export const BIRDS_EYE_MIN_DISTANCE = 16;
-export const BIRDS_EYE_MAX_DISTANCE = 140;
-
 export function CameraViewControl({ boneName = HEAD_BONE_NAME }: Props) {
   const cameraMode = useGameStore((state) => state.cameraMode);
+  const isViewLocked = useGameStore((state) => state.isViewLocked);
   const characterRef = useGameStore((state) => state.characterRef);
   const isGameLoaded = useGameStore((state) => state.isGameStarted);
   const isControlEnabled = useGameStore((state) => state.isControlEnabled);
@@ -43,6 +47,7 @@ export function CameraViewControl({ boneName = HEAD_BONE_NAME }: Props) {
     characterRef,
     controlsRef,
     enabled: cameraMode === CameraMode.Follow && isControlEnabled,
+    viewLocked: isViewLocked,
   });
 
   useKeyboardCamera({
@@ -54,9 +59,15 @@ export function CameraViewControl({ boneName = HEAD_BONE_NAME }: Props) {
   const resetCamera = useCallback((earlyStop: boolean = true) => {
     if (!characterRef?.current || !controlsRef.current) return Promise.resolve();
 
-    const charPos = characterRef.current.position;
-    const pos = charPos.clone().add(CAMERA_POSITION);
-    const lookAt = charPos.clone().add(CAMERA_LOOKAT);
+    const character = characterRef.current;
+    const { cameraMode, isViewLocked } = useGameStore.getState();
+    const { pos, lookAt } =
+      cameraMode === CameraMode.Follow && isViewLocked
+        ? lockedFollowLookAt(character)
+        : {
+            pos: character.position.clone().add(CAMERA_POSITION),
+            lookAt: character.position.clone().add(CAMERA_LOOKAT),
+          };
 
     const controls = controlsRef.current;
     const originalThreshold = controls.restThreshold;
@@ -142,6 +153,22 @@ export function CameraViewControl({ boneName = HEAD_BONE_NAME }: Props) {
       smoothTime={isControlEnabled ? (isBirdsEye ? 0.25 : 0.1) : 1}
     />
   );
+}
+
+function lockedFollowLookAt(character: THREE.Object3D) {
+  const yaw = character.rotation.y;
+  const heightDelta = FOLLOW_LOCK_HEIGHT - FOLLOW_LOOKAT_Y;
+  const horiz = Math.sqrt(Math.max(FOLLOW_LOCK_DISTANCE ** 2 - heightDelta ** 2, 0.01));
+  const { x, y, z } = character.position;
+
+  return {
+    pos: new THREE.Vector3(
+      x - Math.sin(yaw) * horiz,
+      y + FOLLOW_LOCK_HEIGHT,
+      z - Math.cos(yaw) * horiz
+    ),
+    lookAt: new THREE.Vector3(x, y + FOLLOW_LOOKAT_Y, z),
+  };
 }
 
 function disablePointerControls(controls: CameraControls) {

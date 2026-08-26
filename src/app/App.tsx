@@ -36,6 +36,7 @@ export default function App() {
     const [dpr, setDpr] = useState(1.5);
 
     const toggleCameraMode = useGameStore((state) => state.toggleCameraMode);
+    const toggleViewLock = useGameStore((state) => state.toggleViewLock);
     const setGpuError = useGameStore((state) => state.setGpuError);
     const setAudioListener = useGameStore((state) => state.setAudioListener);
     const gpuError = useGameStore((state) => state.gpuError);
@@ -67,6 +68,10 @@ export default function App() {
 
     useShortcut('c', () => {
         toggleCameraMode();
+    });
+
+    useShortcut('v', () => {
+        toggleViewLock();
     });
 
     return <>

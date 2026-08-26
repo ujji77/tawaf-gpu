@@ -17,6 +17,10 @@ interface GameState {
   cameraMode: CameraMode;
   setCameraMode: (mode: CameraMode) => void;
   toggleCameraMode: () => void;
+
+  isViewLocked: boolean;
+  setViewLocked: (locked: boolean) => void;
+  toggleViewLock: () => void;
   
   // ===== Character State =====
   characterRef: React.MutableRefObject<Group | null> | null;
@@ -60,6 +64,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   toggleCameraMode: () => set((state) => ({
     cameraMode: (state.cameraMode + 1) % CAMERA_MODE_COUNT
   })),
+
+  isViewLocked: true,
+  setViewLocked: (locked) => set({ isViewLocked: locked }),
+  toggleViewLock: () => set((state) => ({ isViewLocked: !state.isViewLocked })),
   
   // ===== Character State =====
   characterRef: null,
