@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import { CameraControls } from '@react-three/drei';
 import { Group } from 'three';
 import { input } from '../../../core/input/controls';
-import { FOLLOW_LOCK_POLAR, FOLLOW_LOOKAT_Y } from '../config';
+import { FOLLOW_LOCK_AZIMUTH_OFFSET, FOLLOW_LOCK_POLAR, FOLLOW_LOOKAT_Y } from '../config';
 
 const LOCK_IDLE_DELAY_MS = 1600;
 const LOCK_TRACK_LAMBDA = 8;
@@ -63,7 +63,7 @@ export function useFollowCamera({
     const lambda = userOrbited.current ? LOCK_RECENTER_LAMBDA : LOCK_TRACK_LAMBDA;
     const t = 1 - Math.exp(-lambda * dt);
 
-    const targetAzimuth = character.rotation.y + Math.PI;
+    const targetAzimuth = character.rotation.y + FOLLOW_LOCK_AZIMUTH_OFFSET;
     const azimuthDelta = Math.atan2(
       Math.sin(targetAzimuth - controls.azimuthAngle),
       Math.cos(targetAzimuth - controls.azimuthAngle)

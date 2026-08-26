@@ -8,6 +8,7 @@ import {
   CAMERA_POSITION,
   CAMERA_LOOKAT,
   FOLLOW_LOOKAT_Y,
+  FOLLOW_LOCK_AZIMUTH_OFFSET,
   FOLLOW_LOCK_DISTANCE,
   FOLLOW_LOCK_HEIGHT,
   BIRDS_EYE_POSITION,
@@ -104,7 +105,7 @@ export function CameraViewControl({ boneName = HEAD_BONE_NAME }: Props) {
     });
   }, []);
 
-  // initial sequence, reset camera to back
+  // initial sequence, reset camera to locked follow
   useEffect(() => {
     if (isGameLoaded && !isControlEnabled) {
       document.body.style.cursor = 'wait';
@@ -156,16 +157,16 @@ export function CameraViewControl({ boneName = HEAD_BONE_NAME }: Props) {
 }
 
 function lockedFollowLookAt(character: THREE.Object3D) {
-  const yaw = character.rotation.y;
+  const azimuth = character.rotation.y + FOLLOW_LOCK_AZIMUTH_OFFSET;
   const heightDelta = FOLLOW_LOCK_HEIGHT - FOLLOW_LOOKAT_Y;
   const horiz = Math.sqrt(Math.max(FOLLOW_LOCK_DISTANCE ** 2 - heightDelta ** 2, 0.01));
   const { x, y, z } = character.position;
 
   return {
     pos: new THREE.Vector3(
-      x - Math.sin(yaw) * horiz,
+      x + Math.sin(azimuth) * horiz,
       y + FOLLOW_LOCK_HEIGHT,
-      z - Math.cos(yaw) * horiz
+      z + Math.cos(azimuth) * horiz
     ),
     lookAt: new THREE.Vector3(x, y + FOLLOW_LOOKAT_Y, z),
   };

@@ -5,6 +5,13 @@
 // boundary never lets the character clip into a corner.
 export const KAABA_COLLISION_RADIUS = 6.8;
 
+// Opening camera looks toward -Z, so the Kaaba's left wall is the -X face.
+export const CHARACTER_SPAWN_POSITION: [number, number, number] = [
+  -(KAABA_COLLISION_RADIUS + 1),
+  0,
+  0,
+];
+
 // floor_whitetile_20x20_meters.glb tiles repeated in a grid, centered on the origin.
 export const FLOOR_TILE_SIZE = 20;
 export const FLOOR_GRID_RADIUS = 2; // tiles span -2..2 on each axis (5x5 grid)

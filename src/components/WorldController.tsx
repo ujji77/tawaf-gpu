@@ -9,6 +9,7 @@ import {
 import { CosmicSystem } from './cosmic/CosmicSystem';
 import { StarrySky } from './background/StarrySky';
 import { useGameStore } from '../core/store/gameStore';
+import { CHARACTER_SPAWN_POSITION } from '../core/worldConfig';
 import { AsyncCompile } from '@core';
 import { Floor } from './Floor';
 import { Kaaba } from './Kaaba';
@@ -94,7 +95,7 @@ export function WorldController() {
             </AsyncCompile>
 
             <AsyncCompile id="character" onReady={setComponentReady} debug={debugMode}>
-                <Character position={[0, 0, 8]} scale={1} visible={enableCharacter} />
+                <Character position={CHARACTER_SPAWN_POSITION} scale={1} visible={enableCharacter} />
             </AsyncCompile>
         </Suspense>
     </>
