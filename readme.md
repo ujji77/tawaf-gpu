@@ -57,53 +57,20 @@ Tests cover the lesson contract — tawaf stop order, stand-off outside the Kaab
 
 Shared helpers live in the [`packages/three-core`](https://github.com/momentchan/three-core) submodule. Do not commit local edits there.
 
-## Deploy (Cloudflare Pages)
+## Deploy
 
-This is a static Vite site. **Cloudflare Pages** serves the files from the edge cache — no Worker CPU for the Kaaba, textures, or JS. A Pages Function runs only for `POST /event` (start / hotspot / screenshot / restart).
+`npm run build` produces a plain static site in `dist/`. There is no server, no
+database, and no build-time secrets — serve `dist/` from any static host (GitHub
+Pages, Netlify, Cloudflare Pages, Vercel, S3, nginx). `base: "./"` in
+`vite.config.js` means it also works from a subpath.
 
-Page views use [Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/).
+HTTPS is required at runtime because browsers only expose WebGPU on a secure
+context.
 
-### First deploy
-
-```bash
-npx wrangler login
-cp .env.example .env   # then paste your Web Analytics token
-npm run deploy
-```
-
-The token is public (it ships in the page). Get it from **Cloudflare Dashboard → Analytics & logs → Web Analytics → Add a site**. Leave it blank to skip the beacon.
-
-Do **not** also turn on “Hosted analytics” for the same hostname, or page views will double-count.
-
-### GitHub
-
-On push to `main`, [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) tests, builds, and deploys. Add these repository secrets:
-
-| Secret | Where |
-| --- | --- |
-| `CLOUDFLARE_API_TOKEN` | API token with **Cloudflare Pages Edit** |
-| `CLOUDFLARE_ACCOUNT_ID` | Right sidebar of the Cloudflare dashboard |
-| `CF_ANALYTICS_TOKEN` | Same Web Analytics token as `.env` |
-
-Clone with `--recurse-submodules`; the Action already checks submodules out.
-
-Custom event storage needs [Workers Analytics Engine](https://dash.cloudflare.com/?to=/:account/workers/analytics-engine) turned on. Until then `/event` still returns 204 and drops the write.
-
-### Querying events
-
-```sql
-SELECT
-  blob1 AS event,
-  blob2 AS extra,
-  blob3 AS country,
-  SUM(_sample_interval) AS n
-FROM tawaf_gpu
-WHERE timestamp >= NOW() - INTERVAL '7' DAY
-GROUP BY event, extra, country
-ORDER BY n DESC
-```
-
-Run that against the [Analytics Engine SQL API](https://developers.cloudflare.com/analytics/analytics-engine/sql-api/).
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the tests and build on
+every push and PR; it does not deploy anywhere. Host-specific notes (the
+`public/_headers` CSP file, the submodule checkout) are in
+[`docs/deploy.md`](docs/deploy.md).
 
 ## Controls
 
