@@ -6,6 +6,7 @@ Use it **to learn** tawaf, Hajj, and Umrah as a spatial lesson — the sites are
 
 This is **not** a fiqh reference. The cards are brief spatial notes. For rulings, follow a teacher you trust.
 
+**Live:** [tawaf-gpu.pages.dev](https://tawaf-gpu.pages.dev)  
 **Author:** [Uzair](https://www.linkedin.com/in/spatial-uzair)  
 **Repo:** [github.com/ujji77/tawaf-gpu](https://github.com/ujji77/tawaf-gpu)
 
@@ -55,6 +56,54 @@ npm run test:watch
 Tests cover the lesson contract — tawaf stop order, stand-off outside the Kaaba, play-area bounds, animation blends, N/P guidance, screenshot arming, and restart. They do **not** boot WebGPU or screenshot the canvas; that would be slow, flaky, and a poor fit for a forkable demo.
 
 Shared helpers live in the [`packages/three-core`](https://github.com/momentchan/three-core) submodule. Do not commit local edits there.
+
+## Deploy (Cloudflare Pages)
+
+This is a static Vite site. **Cloudflare Pages** serves the files from the edge cache — no Worker CPU for the Kaaba, textures, or JS. A Pages Function runs only for `POST /event` (start / hotspot / screenshot / restart).
+
+Page views use [Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/).
+
+### First deploy
+
+```bash
+npx wrangler login
+cp .env.example .env   # then paste your Web Analytics token
+npm run deploy
+```
+
+The token is public (it ships in the page). Get it from **Cloudflare Dashboard → Analytics & logs → Web Analytics → Add a site**. Leave it blank to skip the beacon.
+
+Do **not** also turn on “Hosted analytics” for the same hostname, or page views will double-count.
+
+### GitHub
+
+On push to `main`, [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) tests, builds, and deploys. Add these repository secrets:
+
+| Secret | Where |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | API token with **Cloudflare Pages Edit** |
+| `CLOUDFLARE_ACCOUNT_ID` | Right sidebar of the Cloudflare dashboard |
+| `CF_ANALYTICS_TOKEN` | Same Web Analytics token as `.env` |
+
+Clone with `--recurse-submodules`; the Action already checks submodules out.
+
+Custom event storage needs [Workers Analytics Engine](https://dash.cloudflare.com/?to=/:account/workers/analytics-engine) turned on. Until then `/event` still returns 204 and drops the write.
+
+### Querying events
+
+```sql
+SELECT
+  blob1 AS event,
+  blob2 AS extra,
+  blob3 AS country,
+  SUM(_sample_interval) AS n
+FROM tawaf_gpu
+WHERE timestamp >= NOW() - INTERVAL '7' DAY
+GROUP BY event, extra, country
+ORDER BY n DESC
+```
+
+Run that against the [Analytics Engine SQL API](https://developers.cloudflare.com/analytics/analytics-engine/sql-api/).
 
 ## Controls
 
