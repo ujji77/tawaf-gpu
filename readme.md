@@ -12,6 +12,8 @@ This is **not** a fiqh reference. The cards are brief spatial notes. For rulings
 
 Built on **[False Earth](https://github.com/momentchan/false-earth)** by [Ming-Jyun Hung](https://mingjyunhung.com/) — React Three Fiber, Three.js WebGPU, and TSL — with the grass field replaced by the Haram plaza.
 
+![The Kaaba on the marble mataf at night](docs/screenshot.png)
+
 ## Features
 
 - **Data-driven sites** — each hotspot is id, title, subtitle, body, stand position, look-at, and trigger radius
