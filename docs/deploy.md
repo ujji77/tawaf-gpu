@@ -21,6 +21,10 @@ There is no server, no database, and no build-time secrets. Nothing phones home.
   Netlify read it and apply the Content-Security-Policy and MIME-type rules.
   Other hosts ignore the file — translate the same rules into your host's header
   config if you want the CSP.
+- **`public/robots.txt`** and **`public/sitemap.xml`** ship at the site root. Both
+  hard-code `https://tawaf-gpu.pages.dev` — change that to your own domain if you
+  deploy this fork somewhere else. `robots.txt` disallows AI/LLM crawlers; edit
+  it if your policy differs.
 - **HTTPS is required at runtime.** Browsers only expose WebGPU on a secure
   context. Every host above serves HTTPS by default; if you self-host, terminate
   TLS in front of the files.
