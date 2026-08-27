@@ -8,7 +8,7 @@ import { Bgm } from '@core';
 import { useShortcut } from '@core/hooks/useShortcut';
 
 const tracks = [
-    { id: 'grass_field', url: '/audio/grass_field.mp3', volume: 1.5 },
+    { id: 'ambient', url: '/audio/ambient.mp3', volume: 1.5 },
     { id: 'noise', url: '/audio/noise.m4a', volume: 0.1}
 ]
 export default function AudioButton() {

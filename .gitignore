@@ -1,8 +1,5 @@
 # dependencies
 node_modules/
-package-lock.json
 dist
 .env
 .env.local
-.wrangler
-.dev.vars

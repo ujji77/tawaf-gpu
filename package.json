@@ -9,8 +9,6 @@
     "build": "vite build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "deploy": "npm run build && wrangler pages deploy dist --project-name=tawaf-gpu --commit-dirty=true",
-    "lint": "eslint .",
     "preview": "vite preview"
   },
   "devDependencies": {
@@ -19,8 +17,7 @@
     "sass": "^1.93.2",
     "vite": "^7.1.7",
     "vite-plugin-glsl": "^1.5.4",
-    "vitest": "^4.1.11",
-    "wrangler": "^4.127.0"
+    "vitest": "^4.1.11"
   },
   "dependencies": {
     "@emotion/react": "^11.13.5",
@@ -36,7 +33,6 @@
     "gsap": "^3.14.2",
     "leva": "^0.9.35",
     "maath": "^0.10.7",
-    "mitt": "^3.0.1",
     "r3f-perf": "^7.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
