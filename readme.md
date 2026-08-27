@@ -12,7 +12,11 @@ This is **not** a fiqh reference. The cards are brief spatial notes. For rulings
 
 Built on **[False Earth](https://github.com/momentchan/false-earth)** by [Ming-Jyun Hung](https://mingjyunhung.com/) — React Three Fiber, Three.js WebGPU, and TSL — with the grass field replaced by the Haram plaza.
 
-![The Kaaba on the marble mataf at night](docs/screenshot.png)
+![Tawaf GPU](public/og.jpg)
+
+![Looking up at the Kaaba door and the kiswah band at night, Maqam Ibrahim alongside](public/images/tawaf-gpu-1.jpg)
+![A pilgrim in ihram crossing the marble mataf toward the Kaaba at sunrise](public/images/tawaf-gpu-2.jpg)
+![Three-quarter view of the Kaaba on its marble base at dusk, the Black Stone corner in view](public/images/tawaf-gpu-3.jpg)
 
 ## Features
 
