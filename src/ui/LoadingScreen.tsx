@@ -31,16 +31,30 @@ const GitHubIcon = () => (
     </svg>
 );
 
-const REPOS = [
+const LinkedInIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+    </svg>
+);
+
+const LINKS = [
     {
         href: 'https://github.com/ujji77/tawaf-gpu',
         label: 'tawaf-gpu',
         hint: 'this repo · fork it',
+        icon: 'github',
     },
     {
         href: 'https://github.com/momentchan/false-earth',
         label: 'false-earth',
         hint: 'original engine',
+        icon: 'github',
+    },
+    {
+        href: 'https://www.linkedin.com/in/spatial-uzair',
+        label: 'Uzair',
+        hint: 'author',
+        icon: 'linkedin',
     },
 ] as const;
 
@@ -53,10 +67,10 @@ function RepoLinks({ compact }: { compact?: boolean }) {
             justifyContent: 'flex-start',
             marginTop: compact ? '0.85rem' : '1.4rem',
         }}>
-            {REPOS.map((repo) => (
+            {LINKS.map((link) => (
                 <a
-                    key={repo.href}
-                    href={repo.href}
+                    key={link.href}
+                    href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
@@ -72,11 +86,11 @@ function RepoLinks({ compact }: { compact?: boolean }) {
                     onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = '#fff'; }}
                     onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.color = '#ddd'; }}
                 >
-                    <GitHubIcon />
+                    {link.icon === 'linkedin' ? <LinkedInIcon /> : <GitHubIcon />}
                     <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px', lineHeight: 1.2 }}>
-                        <span style={{ fontWeight: 600 }}>{repo.label}</span>
+                        <span style={{ fontWeight: 600 }}>{link.label}</span>
                         <span style={{ fontSize: '0.58rem', letterSpacing: '0.04em', color: '#888', fontWeight: 400 }}>
-                            {repo.hint}
+                            {link.hint}
                         </span>
                     </span>
                 </a>
@@ -260,17 +274,17 @@ export function LoadingScreen() {
                         </p>
                         {!isMobileLandscape && (
                             <p style={{ margin: '0 0 0.85em' }}>
-                                Markers sit at the Black Stone, the Kaaba door, Maqam Ibrahim,
-                                Hijr Ismail, and the Yemeni Corner. Walk into one for a short
-                                note, or press <span style={{ color: '#eee' }}>N</span> to be
-                                guided around the circuit. Fork the scene, rewrite the cards,
-                                add stops — the lesson is a config file.
+                                Use it to learn tawaf, Hajj, and Umrah in place: walk up to
+                                the Black Stone, the door, Maqam Ibrahim, Hijr Ismail, and
+                                the Yemeni Corner. It is also a technical demo — a forkable
+                                WebGPU scene showing how to build interactive, spatial
+                                lessons in the browser.
                             </p>
                         )}
                         {isMobileLandscape && (
                             <p style={{ margin: '0 0 0.85em' }}>
-                                Approach a marker for a short note, or press N to be guided
-                                around the circuit. Fork it and write your own lesson.
+                                Use it to learn tawaf, Hajj, and Umrah — or as a technical
+                                demo of how to build interactive scenes in the browser.
                             </p>
                         )}
                         <RepoLinks compact={isMobileLandscape} />
