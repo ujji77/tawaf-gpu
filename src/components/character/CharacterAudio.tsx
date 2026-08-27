@@ -13,11 +13,11 @@ export const CharacterAudio = forwardRef<CharacterAudioHandle>((_, ref) => {
   const characterRef = useGameStore((state) => state.characterRef);
 
   const { play } = useOneShotAudio(listener as AudioListener, [
-    '/audio/fs_grass1.mp3',
-    '/audio/fs_grass2.mp3',
-    '/audio/fs_grass3.mp3',
-    '/audio/fs_grass4.mp3',
-    '/audio/fs_grass5.mp3',
+    '/audio/fs_step1.mp3',
+    '/audio/fs_step2.mp3',
+    '/audio/fs_step3.mp3',
+    '/audio/fs_step4.mp3',
+    '/audio/fs_step5.mp3',
   ]);
 
   useImperativeHandle(ref, () => ({

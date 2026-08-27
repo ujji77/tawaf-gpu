@@ -132,6 +132,10 @@ The hajj man listing states the models are free **for the purpose of aiding Isla
 
 Daytime atmosphere follows the Three.js **webgl_shaders_sky** example (Preetham model): [threejs.org/examples/#webgl_shaders_sky](https://threejs.org/examples/?q=sky#webgl_shaders_sky).
 
+### Audio
+
+The footstep and ambient clips in `public/audio/` are placeholders carried over from the original template. Swap in your own bed for a plaza; the file names (`fs_step1..5.mp3`, `ambient.mp3`) are wired in `src/components/character/CharacterAudio.tsx` and `src/ui/AudioButton.tsx`.
+
 ### Libraries
 
 React Three Fiber, Three.js (WebGPU / TSL), Zustand, Leva, GSAP, Vite, r3f-perf.
