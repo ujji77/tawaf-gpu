@@ -37,6 +37,12 @@ const LinkedInIcon = () => (
     </svg>
 );
 
+const SketchfabIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M11.511 0 4.74 4.223v6.386L4.733 10.6v.007l6.778 4.219 6.77-4.219V4.223Zm0 1.353 5.64 3.513-5.64 3.518-5.647-3.518Zm-5.85 4.21 5.77 3.59v7.175l-5.77-3.59Zm12.42 0v7.175l-5.77 3.59V9.153ZM1.332 8.496l-.02 10.341 10.199 5.163.02-10.343Zm21.336 0-10.2 5.161.021 10.343 10.199-5.163Z" />
+    </svg>
+);
+
 const LINKS = [
     {
         href: 'https://github.com/ujji77/tawaf-gpu',
@@ -55,6 +61,12 @@ const LINKS = [
         label: 'Uzair',
         hint: 'author',
         icon: 'linkedin',
+    },
+    {
+        href: 'https://github.com/ujji77/tawaf-gpu#credits',
+        label: 'Sketchfab',
+        hint: '3D assets',
+        icon: 'sketchfab',
     },
 ] as const;
 
@@ -86,7 +98,7 @@ function RepoLinks({ compact }: { compact?: boolean }) {
                     onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = '#fff'; }}
                     onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.color = '#ddd'; }}
                 >
-                    {link.icon === 'linkedin' ? <LinkedInIcon /> : <GitHubIcon />}
+                    {link.icon === 'linkedin' ? <LinkedInIcon /> : link.icon === 'sketchfab' ? <SketchfabIcon /> : <GitHubIcon />}
                     <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px', lineHeight: 1.2 }}>
                         <span style={{ fontWeight: 600 }}>{link.label}</span>
                         <span style={{ fontSize: '0.58rem', letterSpacing: '0.04em', color: '#888', fontWeight: 400 }}>
@@ -242,10 +254,10 @@ export function LoadingScreen() {
                     {/* Title */}
                     <div style={{
                         fontSize: '1rem', fontWeight: 'bold',
-                        letterSpacing: isMobile ? '0.3rem' : '0.5rem',
+                        letterSpacing: isMobile ? '0.18rem' : '0.32rem',
                         marginBottom: isMobileLandscape ? '0.35rem' : '0.55rem',
                     }}>
-                        TAWAF
+                        TAWAF GPU
                     </div>
                     <div style={{
                         fontSize: isMobileLandscape ? '0.58rem' : '0.68rem',

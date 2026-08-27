@@ -1,6 +1,6 @@
 {
-  "name": "Tawaf",
-  "short_name": "Tawaf",
+  "name": "Tawaf GPU",
+  "short_name": "Tawaf GPU",
   "description": "An open-source WebGPU walk around the Kaaba. Learn tawaf as a spatial lesson, or fork it to build your own interactive scene.",
   "start_url": "./",
   "display": "fullscreen",

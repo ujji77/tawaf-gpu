@@ -1,4 +1,4 @@
-# Tawaf
+# Tawaf GPU
 
 An open-source [WebGPU](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API) walk around the Kaaba. You stand on the mataf, move a pilgrim through the circuit, and stop at the Black Stone, the door, Maqam Ibrahim, Hijr Ismail, and the Yemeni Corner.
 
