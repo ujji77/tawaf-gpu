@@ -4,9 +4,7 @@ import { useControls } from 'leva';
 import {
     uTime,
     uDeltaTime,
-    uGlobalHueShift,
 } from '../core/shaders/uniforms';
-import { CosmicSystem } from './cosmic/CosmicSystem';
 import { StarrySky } from './background/StarrySky';
 import { useGameStore } from '../core/store/gameStore';
 import { CHARACTER_SPAWN_POSITION } from '../core/worldConfig';
@@ -55,9 +53,8 @@ export function WorldController() {
     }, { collapsed: true });
 
 
-    const { timeScale, globalHue } = useControls('Game.System', {
+    const { timeScale } = useControls('Game.System', {
         timeScale: { value: 1.0, min: 0.0, max: 2.0, label: 'Game Speed' },
-        globalHue: { value: 0.0, min: 0.0, max: 1.0, label: 'Global Hue' },
     });
 
     useEffect(() => {
@@ -70,8 +67,6 @@ export function WorldController() {
 
     useFrame((_state, rawDelta) => {
         const delta = Math.min(rawDelta, 0.1);
-        uGlobalHueShift.value = globalHue;
-
         uTime.value += delta * timeScale;
         uDeltaTime.value = delta * timeScale;
     });
@@ -81,7 +76,6 @@ export function WorldController() {
         <Suspense fallback={null}>
             <group visible={enableEnv}>
                 <StarrySky />
-                <CosmicSystem />
             </group>
 
             {/* Major components - toggle visibility instead of unmounting */}

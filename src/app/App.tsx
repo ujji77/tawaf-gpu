@@ -23,8 +23,6 @@ useLoader.preload(AudioLoader,
         '/audio/fs_grass4.mp3',
         '/audio/fs_grass5.mp3']);
 
-useLoader.preload(AudioLoader, ['/audio/wave01.mp3']);
-
 useGLTF.preload(MODEL_PATHS);
 
 function SceneEnvironment() {
