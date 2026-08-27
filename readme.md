@@ -11,6 +11,18 @@ This is **not** a fiqh reference. The cards are brief spatial notes. For rulings
 
 Built on **[False Earth](https://github.com/momentchan/false-earth)** by [Ming-Jyun Hung](https://mingjyunhung.com/) — React Three Fiber, Three.js WebGPU, and TSL — with the grass field replaced by the Haram plaza.
 
+## Features
+
+- **Data-driven sites** — each hotspot is id, title, subtitle, body, stand position, look-at, and trigger radius
+- **Guided run** — **N** / **P** / click lerp the pilgrim to a stop, then turn him to face the site
+- **Proximity cards** — walk into a radius (with hysteresis so the card does not flicker) and the note opens
+- **Play area** — circular collision around the Kaaba, circular outer bound at the tiled edge
+- **Camera** — Follow / FPV / Detached / BirdsEye; **V** view-lock eases the follow camera back behind the character after a WASD orbit
+- **Day / night** — Preetham atmosphere with clouds, or a starfield; the sun drives the directional light
+- **TSL post** — bloom, depth of field, tone mapping; screenshots flush after the post pass
+- **Adaptive DPR** — `PerformanceMonitor` scales resolution under load
+- **HTTPS dev server** — required for WebGPU in many browsers
+
 ## Getting started
 
 A browser with WebGPU (Chrome, Edge, or recent Safari) and Node.js. The Vite dev server uses HTTPS because many browsers only enable WebGPU on a secure context.
