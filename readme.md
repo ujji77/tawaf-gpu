@@ -47,6 +47,13 @@ npm run preview
 
 The canvas will not start without WebGPU. Incompatible GPUs show **SYSTEM INCOMPATIBLE** on the intro card.
 
+```bash
+npm test          # hotspot order, collision, blends, store
+npm run test:watch
+```
+
+Tests cover the lesson contract — tawaf stop order, stand-off outside the Kaaba, play-area bounds, animation blends, N/P guidance, screenshot arming, and restart. They do **not** boot WebGPU or screenshot the canvas; that would be slow, flaky, and a poor fit for a forkable demo.
+
 Shared helpers live in the [`packages/three-core`](https://github.com/momentchan/three-core) submodule. Do not commit local edits there.
 
 ## Controls
