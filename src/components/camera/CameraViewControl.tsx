@@ -3,6 +3,7 @@ import { CameraControls, CameraControlsImpl } from '@react-three/drei';
 import { useFPVCamera } from './hooks/useFPVCamera';
 import { useFollowCamera } from './hooks/useFollowCamera';
 import { useKeyboardCamera } from './hooks/useKeyboardCamera';
+import { useTouchCamera } from './hooks/useTouchCamera';
 import { HEAD_BONE_NAME } from '../character/config';
 import {
   CAMERA_POSITION,
@@ -27,6 +28,7 @@ type Props = {
 export function CameraViewControl({ boneName = HEAD_BONE_NAME }: Props) {
   const cameraMode = useGameStore((state) => state.cameraMode);
   const isViewLocked = useGameStore((state) => state.isViewLocked);
+  const isMobile = useGameStore((state) => state.isMobile);
   const characterRef = useGameStore((state) => state.characterRef);
   const isGameLoaded = useGameStore((state) => state.isGameStarted);
   const isControlEnabled = useGameStore((state) => state.isControlEnabled);
@@ -56,6 +58,12 @@ export function CameraViewControl({ boneName = HEAD_BONE_NAME }: Props) {
     controlsRef,
     cameraMode,
     enabled: keyboardEnabled,
+  });
+
+  useTouchCamera({
+    controlsRef,
+    cameraMode,
+    enabled: isMobile && isControlEnabled && cameraMode !== CameraMode.FPV,
   });
 
   const resetCamera = useCallback((earlyStop: boolean = true) => {

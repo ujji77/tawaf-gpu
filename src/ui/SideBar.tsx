@@ -7,6 +7,7 @@ import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
 import MapIcon from '@mui/icons-material/Map';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
+import NearMeIcon from '@mui/icons-material/NearMe';
 
 export function SideBar() {
     const isMobile = useGameStore((state) => state.isMobile);
@@ -14,10 +15,11 @@ export function SideBar() {
     const cameraMode = useGameStore((state) => state.cameraMode);
     const setCameraMode = useGameStore((state) => state.setCameraMode);
 
-    const quality = useGameStore((state) => state.quality); 
+    const quality = useGameStore((state) => state.quality);
     const toggleQuality = useGameStore((state) => state.toggleQuality);
     const skyMode = useGameStore((state) => state.skyMode);
-    const toggleSkyMode = useGameStore((state) => state.toggleSkyMode); 
+    const toggleSkyMode = useGameStore((state) => state.toggleSkyMode);
+    const cycleHotspot = useGameStore((state) => state.cycleHotspot);
 
     const cycleCameraMode = () => {
         setCameraMode(((cameraMode + 1) % CAMERA_MODE_COUNT) as CameraMode);
@@ -104,6 +106,14 @@ export function SideBar() {
                     {currentCamera.icon}
                 </IconButton>
             </Tooltip>
+
+            {isMobile && (
+                <Tooltip title="Next site" placement="left">
+                    <IconButton sx={btnStyle} onClick={() => cycleHotspot(1)}>
+                        <NearMeIcon sx={iconBaseStyle} />
+                    </IconButton>
+                </Tooltip>
+            )}
         </div>
     );
 }

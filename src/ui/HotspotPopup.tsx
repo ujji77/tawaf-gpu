@@ -4,6 +4,10 @@ import { getHotspot } from '../components/hotspots/config';
 
 const FONT = 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif';
 const GLASS = 'blur(28px) saturate(160%)';
+// Mobile: lighter, less tinted fill so the scene reads through, more blur to keep text legible.
+const GLASS_CLEAR = 'blur(34px) saturate(110%)';
+const MOBILE_BG =
+  'linear-gradient(180deg, rgba(18,19,22,0.30) 0%, rgba(13,14,17,0.40) 100%)';
 const HAIRLINE = '1px solid rgba(255, 255, 255, 0.12)';
 
 const cardStyle: CSSProperties = {
@@ -11,6 +15,7 @@ const cardStyle: CSSProperties = {
   left: '18px',
   bottom: '18px',
   width: 'min(340px, calc(100vw - 220px))',
+  maxWidth: '440px',
   zIndex: 40,
   pointerEvents: 'auto',
   padding: '18px 18px 14px',
@@ -38,7 +43,20 @@ export function HotspotPopup() {
   if (!hotspot) return null;
 
   return (
-    <aside style={{ ...cardStyle, bottom: isMobile ? '148px' : '18px' }} aria-live="polite">
+    <aside
+      style={{
+        ...cardStyle,
+        bottom: isMobile ? '150px' : '18px',
+        // Wider on mobile: the marker card was pinched into ~170px next to the
+        // joystick reservation. Give it the full width minus side margins.
+        width: isMobile ? 'calc(100vw - 36px)' : cardStyle.width,
+        background: isMobile ? MOBILE_BG : cardStyle.background,
+        backdropFilter: isMobile ? GLASS_CLEAR : GLASS,
+        WebkitBackdropFilter: isMobile ? GLASS_CLEAR : GLASS,
+        textShadow: isMobile ? '0 1px 2px rgba(0,0,0,0.4)' : undefined,
+      }}
+      aria-live="polite"
+    >
       <div
         style={{
           fontSize: '9px',
@@ -81,8 +99,14 @@ export function HotspotPopup() {
           marginTop: '14px',
         }}
       >
-        <CycleButton label="P  Previous" onClick={() => cycleHotspot(-1)} />
-        <CycleButton label="N  Next" onClick={() => cycleHotspot(1)} />
+        <CycleButton
+          label={isMobile ? 'Previous' : 'P  Previous'}
+          onClick={() => cycleHotspot(-1)}
+        />
+        <CycleButton
+          label={isMobile ? 'Next' : 'N  Next'}
+          onClick={() => cycleHotspot(1)}
+        />
       </div>
     </aside>
   );

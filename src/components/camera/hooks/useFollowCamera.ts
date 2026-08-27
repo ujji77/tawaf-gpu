@@ -4,6 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import { CameraControls } from '@react-three/drei';
 import { Group } from 'three';
 import { input } from '../../../core/input/controls';
+import { cameraDragState } from '../cameraDragState';
 import { FOLLOW_LOCK_AZIMUTH_OFFSET, FOLLOW_LOCK_POLAR, FOLLOW_LOOKAT_Y } from '../config';
 
 const LOCK_IDLE_DELAY_MS = 1600;
@@ -48,7 +49,8 @@ export function useFollowCamera({
       input.isPressed('CameraLeft') ||
       input.isPressed('CameraRight') ||
       input.isPressed('CameraForward') ||
-      input.isPressed('CameraBackward');
+      input.isPressed('CameraBackward') ||
+      performance.now() < cameraDragState.activeUntil;
 
     if (orbiting) {
       lastOrbitAt.current = performance.now();
