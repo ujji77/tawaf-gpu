@@ -36,11 +36,14 @@ export function HotspotPopup() {
   const isMobile = useGameStore((state) => state.isMobile);
   const nearbyHotspotId = useGameStore((state) => state.nearbyHotspotId);
   const guidedHotspotId = useGameStore((state) => state.guidedHotspotId);
+  const dismissedHotspotId = useGameStore((state) => state.dismissedHotspotId);
   const cycleHotspot = useGameStore((state) => state.cycleHotspot);
+  const dismissHotspot = useGameStore((state) => state.dismissHotspot);
 
   const approaching = Boolean(guidedHotspotId && guidedHotspotId !== nearbyHotspotId);
-  const hotspot = getHotspot(nearbyHotspotId ?? guidedHotspotId);
-  if (!hotspot) return null;
+  const activeId = nearbyHotspotId ?? guidedHotspotId;
+  const hotspot = getHotspot(activeId);
+  if (!hotspot || activeId === dismissedHotspotId) return null;
 
   return (
     <aside
@@ -57,6 +60,7 @@ export function HotspotPopup() {
       }}
       aria-live="polite"
     >
+      <CloseButton onClick={dismissHotspot} />
       <div
         style={{
           fontSize: '9px',
@@ -65,11 +69,19 @@ export function HotspotPopup() {
           textTransform: 'uppercase',
           color: 'rgba(255,255,255,0.4)',
           marginBottom: '8px',
+          paddingRight: '34px',
         }}
       >
         {approaching ? 'Walking to' : 'Site'}
       </div>
-      <div style={{ fontSize: '18px', fontWeight: 600, letterSpacing: '0.01em' }}>
+      <div
+        style={{
+          fontSize: '18px',
+          fontWeight: 600,
+          letterSpacing: '0.01em',
+          paddingRight: '34px',
+        }}
+      >
         {hotspot.title}
       </div>
       <div
@@ -109,6 +121,42 @@ export function HotspotPopup() {
         />
       </div>
     </aside>
+  );
+}
+
+function CloseButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Close"
+      style={{
+        position: 'absolute',
+        top: '10px',
+        right: '10px',
+        width: '30px',
+        height: '30px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 0,
+        border: HAIRLINE,
+        borderRadius: '50%',
+        background: 'rgba(255,255,255,0.06)',
+        color: 'rgba(255,255,255,0.75)',
+        cursor: 'pointer',
+        lineHeight: 0,
+      }}
+    >
+      <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+        <path
+          d="M1 1L11 11M11 1L1 11"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
+      </svg>
+    </button>
   );
 }
 

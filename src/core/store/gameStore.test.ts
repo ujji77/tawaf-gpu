@@ -16,6 +16,7 @@ beforeEach(() => {
     screenshotArmed: false,
     nearbyHotspotId: null,
     guidedHotspotId: null,
+    dismissedHotspotId: null,
     sessionEpoch: 0,
     gpuError: null,
   });
@@ -43,6 +44,38 @@ describe('gameStore hotspots', () => {
     useGameStore.setState({ nearbyHotspotId: 'black-stone' });
     useGameStore.getState().goToHotspot('yemeni-corner');
     expect(useGameStore.getState().guidedHotspotId).toBe('yemeni-corner');
+  });
+});
+
+describe('gameStore hotspot card dismissal', () => {
+  it('remembers which stop the card was closed on', () => {
+    useGameStore.setState({ nearbyHotspotId: 'black-stone' });
+    useGameStore.getState().dismissHotspot();
+    expect(useGameStore.getState().dismissedHotspotId).toBe('black-stone');
+  });
+
+  it('re-arms the card when a different stop comes into range', () => {
+    useGameStore.setState({ nearbyHotspotId: 'black-stone', dismissedHotspotId: 'black-stone' });
+    useGameStore.getState().setNearbyHotspotId('kaaba-door');
+    expect(useGameStore.getState().dismissedHotspotId).toBeNull();
+  });
+
+  it('re-arms the card when leaving every stop', () => {
+    useGameStore.setState({ nearbyHotspotId: 'black-stone', dismissedHotspotId: 'black-stone' });
+    useGameStore.getState().setNearbyHotspotId(null);
+    expect(useGameStore.getState().dismissedHotspotId).toBeNull();
+  });
+
+  it('keeps the card closed while you stay at the dismissed stop', () => {
+    useGameStore.setState({ nearbyHotspotId: 'black-stone', dismissedHotspotId: 'black-stone' });
+    useGameStore.getState().setNearbyHotspotId('black-stone');
+    expect(useGameStore.getState().dismissedHotspotId).toBe('black-stone');
+  });
+
+  it('re-arms the card when cycling to the next stop', () => {
+    useGameStore.setState({ nearbyHotspotId: 'black-stone', dismissedHotspotId: 'black-stone' });
+    useGameStore.getState().cycleHotspot(1);
+    expect(useGameStore.getState().dismissedHotspotId).toBeNull();
   });
 });
 
@@ -76,11 +109,14 @@ describe('gameStore screenshot and restart', () => {
       cameraMode: CameraMode.FPV,
       nearbyHotspotId: 'kaaba-door',
       guidedHotspotId: 'hijr-ismail',
+      dismissedHotspotId: 'kaaba-door',
       sessionEpoch: 3,
     });
 
     useGameStore.getState().restartSession();
     const state = useGameStore.getState();
+
+    expect(state.dismissedHotspotId).toBeNull();
 
     expect(position.x).toBe(CHARACTER_SPAWN_POSITION[0]);
     expect(position.z).toBe(CHARACTER_SPAWN_POSITION[2]);

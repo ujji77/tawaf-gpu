@@ -65,7 +65,9 @@ interface GameState {
 
   nearbyHotspotId: string | null;
   guidedHotspotId: string | null;
+  dismissedHotspotId: string | null;
   setNearbyHotspotId: (id: string | null) => void;
+  dismissHotspot: () => void;
   cycleHotspot: (dir: 1 | -1) => void;
   goToHotspot: (id: string) => void;
   cancelGuidedRun: () => void;
@@ -140,15 +142,29 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   nearbyHotspotId: null,
   guidedHotspotId: null,
-  setNearbyHotspotId: (id) => set({ nearbyHotspotId: id }),
+  dismissedHotspotId: null,
+  setNearbyHotspotId: (id) =>
+    set((state) => ({
+      nearbyHotspotId: id,
+      // A dismissed card stays closed only for the hotspot it was closed on;
+      // moving to a different hotspot (or out of range) re-arms it.
+      dismissedHotspotId: id === state.dismissedHotspotId ? state.dismissedHotspotId : null,
+    })),
+  dismissHotspot: () => {
+    const { nearbyHotspotId, guidedHotspotId } = get();
+    set({ dismissedHotspotId: nearbyHotspotId ?? guidedHotspotId });
+  },
   cycleHotspot: (dir) => {
     const { nearbyHotspotId, guidedHotspotId } = get();
     const next = nextHotspotId(guidedHotspotId ?? nearbyHotspotId, dir);
-    set({ guidedHotspotId: next });
+    set({ guidedHotspotId: next, dismissedHotspotId: null });
   },
   goToHotspot: (id) => {
-    if (get().nearbyHotspotId === id && !get().guidedHotspotId) return;
-    set({ guidedHotspotId: id });
+    if (get().nearbyHotspotId === id && !get().guidedHotspotId) {
+      set({ dismissedHotspotId: null });
+      return;
+    }
+    set({ guidedHotspotId: id, dismissedHotspotId: null });
   },
   cancelGuidedRun: () => set({ guidedHotspotId: null }),
   completeGuidedRun: () => set({ guidedHotspotId: null }),
@@ -166,6 +182,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     set({
       guidedHotspotId: null,
       nearbyHotspotId: null,
+      dismissedHotspotId: null,
       cameraMode: CameraMode.Follow,
       isGameStarted: false,
       isControlEnabled: false,
